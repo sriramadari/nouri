@@ -1,11 +1,13 @@
+import { Platform } from 'react-native';
+
 import { UPLOAD_FIELD } from './upload-field';
 
-/** A file chosen with the document or image picker. */
+/** A file chosen with a picker or recorded on the device. */
 export interface PickedFile {
   uri: string;
   name: string;
   mimeType?: string;
-  /** Present on web: the browser File object. */
+  /** Present on web when the picker gives the browser File object. */
   file?: File;
 }
 
@@ -18,25 +20,31 @@ const MIME_BY_EXTENSION: Record<string, string> = {
   heic: 'image/heic',
   heif: 'image/heif',
   m4a: 'audio/mp4',
+  webm: 'audio/webm',
 };
 
 /**
- * Builds the multipart body the API expects. Browsers send a real File; React Native sends
- * a { uri, name, type } descriptor and reads the file from disk itself.
+ * Builds the multipart body the API expects.
+ * - Web: a real File or Blob (blob: and data: URLs from the camera or recorder are fetched).
+ * - Native: a { uri, name, type } descriptor; React Native streams the file from disk.
  */
-export function toUploadForm(picked: PickedFile): FormData {
+export async function buildUploadForm(picked: PickedFile): Promise<FormData> {
   const form = new FormData();
+  const type =
+    picked.mimeType ?? MIME_BY_EXTENSION[extensionOf(picked.name)] ?? 'application/octet-stream';
+
   if (picked.file) {
     form.append(UPLOAD_FIELD, picked.file);
-    return form;
+  } else if (Platform.OS === 'web') {
+    const blob = await (await fetch(picked.uri)).blob();
+    form.append(UPLOAD_FIELD, new File([blob], picked.name, { type: blob.type || type }));
+  } else {
+    // React Native's FormData accepts this descriptor; the DOM typings only know Blob.
+    form.append(UPLOAD_FIELD, { uri: picked.uri, name: picked.name, type } as unknown as Blob);
   }
-  const extension = picked.name.split('.').pop()?.toLowerCase() ?? '';
-  const descriptor = {
-    uri: picked.uri,
-    name: picked.name,
-    type: picked.mimeType ?? MIME_BY_EXTENSION[extension] ?? 'application/octet-stream',
-  };
-  // React Native's FormData accepts this descriptor; the DOM typings only know Blob.
-  form.append(UPLOAD_FIELD, descriptor as unknown as Blob);
   return form;
+}
+
+function extensionOf(name: string): string {
+  return name.split('.').pop()?.toLowerCase() ?? '';
 }

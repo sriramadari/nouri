@@ -60,3 +60,54 @@ export interface ReportResponse {
   flaggedCount: number;
   skipped?: { name: string; reason: 'VALUE_UNREADABLE' | 'NO_REFERENCE_RANGE' }[];
 }
+
+export type MealSource = 'PHOTO' | 'VOICE' | 'MANUAL';
+
+export interface Nutrition {
+  calories: number;
+  proteinG: number;
+  carbsG: number;
+  fatG: number;
+}
+
+export interface MealItem extends Nutrition {
+  name: string;
+  portion: string;
+  /** 0 to 1; absent for items added by hand. */
+  confidence?: number;
+}
+
+/** An analysed meal that has not been saved yet. */
+export interface MealDraft {
+  source: MealSource;
+  items: (MealItem & { needsReview: boolean })[];
+  totals: Nutrition;
+  confidence: number | null;
+  needsReview: boolean;
+  /** For voice notes: what Nouri heard. */
+  transcript?: string;
+}
+
+export interface CreateMealInput {
+  /** Generated once per meal on the phone; makes saving safe to retry. */
+  clientRequestId: string;
+  eatenAt: string;
+  source: MealSource;
+  items: MealItem[];
+}
+
+export interface MealResponse {
+  id: string;
+  clientRequestId: string;
+  eatenAt: string;
+  source: MealSource;
+  items: MealItem[];
+  totals: Nutrition;
+  confidence: number | null;
+}
+
+export interface DayMeals {
+  date: string;
+  meals: MealResponse[];
+  totals: Nutrition;
+}

@@ -6,7 +6,7 @@ import { Button, Card, ErrorState, Icon, Text } from '@/components/ui';
 import { toApiError } from '@/lib/api/api-error';
 import { api } from '@/lib/api/endpoints';
 import type { ReportResponse } from '@/lib/api/types';
-import { toUploadForm } from '@/lib/api/upload';
+import { buildUploadForm } from '@/lib/api/upload';
 import type { FlaggedMarker } from '@/lib/health/focus-areas';
 import { spacing } from '@/theme';
 
@@ -23,7 +23,12 @@ async function pickAndUpload(): Promise<ReportResponse | null> {
   const asset = result.canceled ? undefined : result.assets[0];
   if (!asset) return null;
   return api.uploadReport(
-    toUploadForm({ uri: asset.uri, name: asset.name, mimeType: asset.mimeType, file: asset.file }),
+    await buildUploadForm({
+      uri: asset.uri,
+      name: asset.name,
+      mimeType: asset.mimeType,
+      file: asset.file,
+    }),
   );
 }
 
