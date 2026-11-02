@@ -37,6 +37,16 @@ export class MealsRepository {
     }
   }
 
+  /** Distinct local days (YYYY-MM-DD) that have at least one meal, for the streak. */
+  async findLoggedDays(userId: string, tzOffsetMinutes: number): Promise<string[]> {
+    const rows = await this.prisma.$queryRaw<{ day: string }[]>`
+      SELECT DISTINCT to_char("eatenAt" + make_interval(mins => ${tzOffsetMinutes}), 'YYYY-MM-DD') AS day
+      FROM "Meal"
+      WHERE "userId" = ${userId}
+    `;
+    return rows.map((row) => row.day);
+  }
+
   findBetween(userId: string, from: Date, to: Date): Promise<Meal[]> {
     return this.prisma.meal.findMany({
       where: { userId, eatenAt: { gte: from, lt: to } },

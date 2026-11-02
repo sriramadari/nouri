@@ -27,7 +27,10 @@ import {
   createMealSchema,
   type ListMealsQuery,
   listMealsQuerySchema,
+  type StreakQuery,
+  streakQuerySchema,
 } from './meals.schemas.js';
+import type { Streak } from './streak.js';
 import { MealsService } from './meals.service.js';
 
 /** Photos are compressed on the phone to well under 1 MB; this leaves room for raw uploads. */
@@ -53,6 +56,14 @@ export class MealsController {
     @Body(new ZodValidationPipe(createMealSchema)) body: CreateMealInput,
   ): Promise<MealResponse> {
     return this.mealsService.save(user, body);
+  }
+
+  @Get('streak')
+  streak(
+    @CurrentUser() user: User,
+    @Query(new ZodValidationPipe(streakQuerySchema)) query: StreakQuery,
+  ): Promise<Streak> {
+    return this.mealsService.streak(user, query);
   }
 
   @Get()

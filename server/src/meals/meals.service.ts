@@ -13,8 +13,9 @@ import {
   toMealResponse,
 } from './meal.response.js';
 import { MealsRepository } from './meals.repository.js';
-import type { CreateMealInput, ListMealsQuery } from './meals.schemas.js';
+import type { CreateMealInput, ListMealsQuery, StreakQuery } from './meals.schemas.js';
 import { overallConfidence, sumNutrition } from './nutrition.js';
+import { computeStreak, type Streak } from './streak.js';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -60,6 +61,11 @@ export class MealsService {
     return toMealResponse(meal);
   }
 
+  async streak(user: User, query: StreakQuery): Promise<Streak> {
+    const days = await this.meals.findLoggedDays(user.id, query.tzOffsetMinutes);
+    return computeStreak(days, localToday(query.tzOffsetMinutes));
+  }
+
   /** Meals for one local calendar day, with the day's totals. */
   async listForDay(user: User, query: ListMealsQuery): Promise<DayMealsResponse> {
     const from = startOfLocalDay(query.date, query.tzOffsetMinutes);
@@ -79,6 +85,10 @@ function toDraft(source: 'PHOTO' | 'VOICE', analysis: MealAnalysis): MealDraft {
     confidence: overallConfidence(items),
     needsReview: items.some((item) => item.needsReview),
   };
+}
+
+export function localToday(tzOffsetMinutes: number, now: Date = new Date()): string {
+  return new Date(now.getTime() + tzOffsetMinutes * 60 * 1000).toISOString().slice(0, 10);
 }
 
 function assertUsable(analysis: MealAnalysis, isPhoto: boolean): void {

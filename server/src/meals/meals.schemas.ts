@@ -33,6 +33,11 @@ export const listMealsQuerySchema = z.object({
   tzOffsetMinutes: z.coerce.number().int().min(-720).max(840).default(330),
 });
 
+export const streakQuerySchema = z.object({
+  tzOffsetMinutes: z.coerce.number().int().min(-720).max(840).default(330),
+});
+
+export type StreakQuery = z.infer<typeof streakQuerySchema>;
 export type SavedMealItem = z.infer<typeof savedMealItemSchema>;
 export type CreateMealInput = z.infer<typeof createMealSchema>;
 export type ListMealsQuery = z.infer<typeof listMealsQuerySchema>;
