@@ -1,0 +1,139 @@
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Sex {
+  MALE
+  FEMALE
+}
+
+enum ActivityLevel {
+  SEDENTARY
+  LIGHT
+  MODERATE
+  ACTIVE
+  VERY_ACTIVE
+}
+
+enum Goal {
+  LOSE_WEIGHT
+  CONTROL_SUGAR
+  EAT_BETTER
+}
+
+enum MealSource {
+  PHOTO
+  VOICE
+  MANUAL
+}
+
+enum ReportStatus {
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum BiomarkerStatus {
+  LOW
+  NORMAL
+  HIGH
+}
+
+enum InsightSlot {
+  MORNING
+  AFTERNOON
+  EVENING
+}
+
+/// One local profile per device. Profile fields stay empty until onboarding is finished.
+model User {
+  id            String         @id @default(uuid())
+  deviceId      String         @unique
+  name          String?
+  age           Int?
+  sex           Sex?
+  heightCm      Float?
+  weightKg      Float?
+  activityLevel ActivityLevel?
+  goal          Goal?
+  calorieTarget Int?
+  proteinTarget Int?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  meals    Meal[]
+  reports  Report[]
+  insights Insight[]
+}
+
+model Meal {
+  id              String     @id @default(uuid())
+  userId          String
+  eatenAt         DateTime
+  source          MealSource
+  /// Array of food items: name, portion, calories and macros.
+  items           Json
+  calories        Int
+  proteinG        Float
+  carbsG          Float
+  fatG            Float
+  confidence      Float?
+  /// Generated on the device so a retried save never creates a duplicate.
+  clientRequestId String
+  createdAt       DateTime   @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, clientRequestId])
+  @@index([userId, eatenAt])
+}
+
+model Report {
+  id         String       @id @default(uuid())
+  userId     String
+  uploadedAt DateTime     @default(now())
+  status     ReportStatus @default(PROCESSING)
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  biomarkers Biomarker[]
+
+  @@index([userId, uploadedAt])
+}
+
+model Biomarker {
+  id       String          @id @default(uuid())
+  reportId String
+  name     String
+  value    Float
+  unit     String
+  refLow   Float?
+  refHigh  Float?
+  status   BiomarkerStatus
+  why      String?
+  action   String?
+
+  report Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@index([reportId])
+}
+
+model Insight {
+  id        String      @id @default(uuid())
+  userId    String
+  date      DateTime    @db.Date
+  slot      InsightSlot
+  message   String
+  why       String
+  createdAt DateTime    @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date, slot])
+}
