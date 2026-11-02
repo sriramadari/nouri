@@ -48,11 +48,23 @@ const AI_ERRORS: Record<AiFailure, { status: HttpStatus; code: string; message: 
   },
 };
 
-/** Codes for Nest's own exceptions (unknown route, file too large, malformed JSON). */
-const CODE_BY_HTTP_STATUS: Partial<Record<number, string>> = {
-  [HttpStatus.BAD_REQUEST]: 'BAD_REQUEST',
-  [HttpStatus.NOT_FOUND]: 'NOT_FOUND',
-  [HttpStatus.PAYLOAD_TOO_LARGE]: 'FILE_TOO_LARGE',
+/**
+ * Nest's own exceptions (unknown route, malformed JSON, file too large) carry technical
+ * messages such as "Cannot POST /x". Users see these, so they get plain words instead.
+ */
+const NEST_ERRORS: Partial<Record<number, { code: string; message: string }>> = {
+  [HttpStatus.BAD_REQUEST]: {
+    code: 'BAD_REQUEST',
+    message: 'Nouri could not understand that request.',
+  },
+  [HttpStatus.NOT_FOUND]: {
+    code: 'NOT_FOUND',
+    message: 'That isn’t available. Please update the app and try again.',
+  },
+  [HttpStatus.PAYLOAD_TOO_LARGE]: {
+    code: 'FILE_TOO_LARGE',
+    message: 'That file is too big. Please choose a smaller photo or PDF.',
+  },
 };
 
 /**
@@ -84,9 +96,12 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     if (exception instanceof HttpException) {
       const status = exception.getStatus();
-      const code =
-        CODE_BY_HTTP_STATUS[status] ?? (status >= 500 ? 'INTERNAL_ERROR' : 'BAD_REQUEST');
-      return { status, body: { error: { code, message: exception.message } } };
+      const known = NEST_ERRORS[status];
+      const error = known ?? {
+        code: status >= 500 ? 'INTERNAL_ERROR' : 'BAD_REQUEST',
+        message: 'Something went wrong. Please try again.',
+      };
+      return { status, body: { error } };
     }
 
     this.logger.error(exception instanceof Error ? exception.stack : String(exception));

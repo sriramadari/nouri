@@ -30,12 +30,11 @@ describe('AllExceptionsFilter', () => {
     });
   });
 
-  it('maps a built in Nest exception to a code from its status', () => {
-    const result = run(new NotFoundException('No such route'));
-    expect(result).toEqual({
-      status: 404,
-      body: { error: { code: 'NOT_FOUND', message: 'No such route' } },
-    });
+  it('replaces Nest technical messages with plain words', () => {
+    const result = run(new NotFoundException('Cannot POST /reports'));
+    expect(result.status).toBe(404);
+    expect(result.body.error.code).toBe('NOT_FOUND');
+    expect(result.body.error.message).not.toContain('Cannot POST');
   });
 
   it('maps an oversized upload to FILE_TOO_LARGE', () => {
