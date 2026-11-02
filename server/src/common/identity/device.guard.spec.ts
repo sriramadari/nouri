@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 
 import type { User } from '../../generated/prisma/client.js';
 import type { UsersService } from '../../users/users.service.js';
-import { ApiException } from '../errors/api.exception.js';
+import { AppError } from '../errors/app-error.js';
 import { DeviceGuard } from './device.guard.js';
 
 const user = { id: 'user-1', deviceId: 'device-abc-123' } as User;
@@ -28,7 +28,7 @@ function createGuard(isPublic = false) {
 }
 
 async function expectErrorCode(promise: Promise<unknown>, code: string) {
-  await expect(promise).rejects.toBeInstanceOf(ApiException);
+  await expect(promise).rejects.toBeInstanceOf(AppError);
   await expect(promise).rejects.toMatchObject({ code });
 }
 

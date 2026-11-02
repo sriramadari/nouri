@@ -1,7 +1,13 @@
-import { type ArgumentsHost, HttpStatus, Logger, NotFoundException } from '@nestjs/common';
+import {
+  type ArgumentsHost,
+  Logger,
+  NotFoundException,
+  PayloadTooLargeException,
+} from '@nestjs/common';
 
 import { AllExceptionsFilter } from './all-exceptions.filter.js';
-import { ApiException } from './api.exception.js';
+import { AiError } from '../../ai/ai.errors.js';
+import { AppError } from './app-error.js';
 
 function run(exception: unknown) {
   const json = vi.fn();
@@ -15,11 +21,9 @@ function run(exception: unknown) {
 }
 
 describe('AllExceptionsFilter', () => {
-  it('keeps the code, message and details of an ApiException', () => {
+  it('keeps the code, message and details of an AppError and picks its status', () => {
     const details = [{ field: 'age', message: 'Too low' }];
-    const result = run(
-      new ApiException(HttpStatus.BAD_REQUEST, 'VALIDATION_FAILED', 'Check your input', details),
-    );
+    const result = run(new AppError('VALIDATION_FAILED', 'Check your input', details));
     expect(result).toEqual({
       status: 400,
       body: { error: { code: 'VALIDATION_FAILED', message: 'Check your input', details } },
@@ -32,6 +36,21 @@ describe('AllExceptionsFilter', () => {
       status: 404,
       body: { error: { code: 'NOT_FOUND', message: 'No such route' } },
     });
+  });
+
+  it('maps an oversized upload to FILE_TOO_LARGE', () => {
+    expect(run(new PayloadTooLargeException('File too large'))).toMatchObject({
+      status: 413,
+      body: { error: { code: 'FILE_TOO_LARGE' } },
+    });
+  });
+
+  it('turns an AI timeout into a retryable 504 with a friendly message', () => {
+    vi.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
+    const result = run(new AiError('TIMEOUT', 'meal image via gemini timed out'));
+    expect(result.status).toBe(504);
+    expect(result.body.error.code).toBe('AI_TIMEOUT');
+    expect(result.body.error.message).not.toContain('gemini');
   });
 
   it('hides the details of unexpected errors', () => {

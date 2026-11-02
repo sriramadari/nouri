@@ -1,8 +1,8 @@
-import { CanActivate, ExecutionContext, HttpStatus, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
 import { UsersService } from '../../users/users.service.js';
-import { ApiException } from '../errors/api.exception.js';
+import { AppError } from '../errors/app-error.js';
 import { DEVICE_ID_HEADER, type DeviceRequest } from './device-request.js';
 import { IS_PUBLIC_KEY } from './public.decorator.js';
 
@@ -32,15 +32,10 @@ export class DeviceGuard implements CanActivate {
     const deviceId = request.header(DEVICE_ID_HEADER)?.trim();
 
     if (!deviceId) {
-      throw new ApiException(
-        HttpStatus.UNAUTHORIZED,
-        'DEVICE_ID_MISSING',
-        `The ${DEVICE_ID_HEADER} header is required.`,
-      );
+      throw new AppError('DEVICE_ID_MISSING', `The ${DEVICE_ID_HEADER} header is required.`);
     }
     if (!DEVICE_ID_PATTERN.test(deviceId)) {
-      throw new ApiException(
-        HttpStatus.UNAUTHORIZED,
+      throw new AppError(
         'DEVICE_ID_INVALID',
         `The ${DEVICE_ID_HEADER} header is not a valid device id.`,
       );

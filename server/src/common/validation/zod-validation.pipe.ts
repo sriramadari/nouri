@@ -1,7 +1,7 @@
-import { HttpStatus, PipeTransform } from '@nestjs/common';
+import type { PipeTransform } from '@nestjs/common';
 import type { ZodType } from 'zod';
 
-import { ApiException } from '../errors/api.exception.js';
+import { AppError } from '../errors/app-error.js';
 
 /**
  * Validates and parses a request value against a Zod schema.
@@ -13,8 +13,7 @@ export class ZodValidationPipe<T> implements PipeTransform<unknown, T> {
   transform(value: unknown): T {
     const result = this.schema.safeParse(value);
     if (!result.success) {
-      throw new ApiException(
-        HttpStatus.BAD_REQUEST,
+      throw new AppError(
         'VALIDATION_FAILED',
         'Some fields need another look.',
         result.error.issues.map((issue) => ({
