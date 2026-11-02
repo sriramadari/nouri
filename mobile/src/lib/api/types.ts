@@ -34,3 +34,29 @@ export interface HealthStatus {
   database: 'connected' | 'disconnected';
   uptimeSeconds: number;
 }
+
+export type BiomarkerStatus = 'LOW' | 'NORMAL' | 'HIGH';
+
+export interface Biomarker {
+  id: string;
+  /** Stable id for markers Nouri understands, e.g. "LDL"; null for others. */
+  key: string | null;
+  name: string;
+  value: number;
+  unit: string;
+  refLow: number | null;
+  refHigh: number | null;
+  status: BiomarkerStatus;
+  why: string | null;
+  action: string | null;
+}
+
+export interface ReportResponse {
+  id: string;
+  uploadedAt: string;
+  status: 'PROCESSING' | 'COMPLETED' | 'FAILED';
+  /** Flagged markers first. */
+  biomarkers: Biomarker[];
+  flaggedCount: number;
+  skipped?: { name: string; reason: 'VALUE_UNREADABLE' | 'NO_REFERENCE_RANGE' }[];
+}

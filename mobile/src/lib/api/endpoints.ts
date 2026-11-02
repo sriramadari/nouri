@@ -1,5 +1,5 @@
 import { apiRequest } from './client';
-import type { HealthStatus, Profile, UserResponse } from './types';
+import type { HealthStatus, Profile, ReportResponse, UserResponse } from './types';
 
 /** Typed functions for each endpoint. Screens call these, never fetch directly. */
 export const api = {
@@ -10,4 +10,11 @@ export const api = {
   /** Safe to retry: it replaces the whole profile, so repeating it changes nothing. */
   saveMe: (profile: Profile) =>
     apiRequest<UserResponse>({ method: 'POST', path: '/users/me', body: profile, retries: 2 }),
+
+  /**
+   * Reading a report can take a while: the server may try more than one AI model. Not
+   * retried automatically, because every upload creates a new report.
+   */
+  uploadReport: (form: FormData) =>
+    apiRequest<ReportResponse>({ method: 'POST', path: '/reports', form, timeoutMs: 90_000 }),
 };
