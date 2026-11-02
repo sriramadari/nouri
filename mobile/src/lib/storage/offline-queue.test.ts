@@ -56,13 +56,25 @@ describe('offline queue', () => {
     expect(useOfflineQueue.getState().failed.map((job) => job.id)).toEqual(['a']);
   });
 
+  it('includes jobs added while a flush is running', async () => {
+    queueJobs('a');
+    const sent: string[] = [];
+    await flushQueue(async (job) => {
+      sent.push(job.id);
+      if (job.id === 'a') queueJobs('b');
+    });
+    expect(sent).toEqual(['a', 'b']);
+    expect(pendingIds()).toEqual([]);
+  });
+
   it('runs only one flush at a time', async () => {
     queueJobs('a');
     let release: () => void = () => undefined;
     const send = jest.fn(() => new Promise<void>((resolve) => (release = resolve)));
 
     const first = flushQueue(send);
-    await flushQueue(send); // returns immediately while the first is still running
+    const second = flushQueue(send); // joins the flush already running
+    expect(second).toBe(first);
     release();
     await first;
 

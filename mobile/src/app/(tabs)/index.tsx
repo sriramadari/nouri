@@ -1,14 +1,18 @@
 import { Link } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
-import { Button, Card, EmptyState, Screen, Text } from '@/components/ui';
+import { Button, Card, Screen, Text } from '@/components/ui';
+import { MealLogger } from '@/features/meals/components/MealLogger';
+import { TodayMealList } from '@/features/meals/components/TodayMealList';
+import { useTodayMeals } from '@/features/meals/use-today-meals';
 import { useProfileStore } from '@/lib/storage/profile-store';
 import { spacing } from '@/theme';
 
-/** Today. Rings, the assistant card and the meal timeline arrive with flows 2 and 3. */
+/** Today. Rings and the assistant card arrive with flow 3. */
 export default function TodayScreen() {
   const name = useProfileStore((state) => state.profile?.name);
   const targets = useProfileStore((state) => state.targets);
+  const today = useTodayMeals();
 
   return (
     <Screen>
@@ -18,10 +22,12 @@ export default function TodayScreen() {
       {targets ? (
         <Card tone="primaryTint">
           <Text variant="label" color="primary">
-            TODAY’S TARGET
+            TODAY
           </Text>
           <Text variant="heading">
-            {targets.calories.toLocaleString('en-IN')} kcal · {targets.proteinG} g protein
+            {today.totals.calories.toLocaleString('en-IN')} of{' '}
+            {targets.calories.toLocaleString('en-IN')} kcal · {Math.round(today.totals.proteinG)} of{' '}
+            {targets.proteinG} g protein
           </Text>
           <View style={styles.planLink}>
             <Link href="/plan" asChild>
@@ -30,10 +36,12 @@ export default function TodayScreen() {
           </View>
         </Card>
       ) : null}
-      <EmptyState
-        icon="today"
-        title="Your day starts here"
-        message="Snap or speak your meals and Nouri will track your progress."
+      <MealLogger />
+      <TodayMealList
+        meals={today.meals}
+        isLoading={today.isLoading}
+        error={today.error}
+        onRetry={() => today.refetch()}
       />
       {__DEV__ ? (
         <Link href="/dev" asChild>

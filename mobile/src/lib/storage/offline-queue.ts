@@ -69,33 +69,33 @@ export const useOfflineQueue = create<OfflineQueueState>()(
 
 export type SendJob = (job: QueuedJob) => Promise<void>;
 
-let flushing = false;
+let currentFlush: Promise<void> | null = null;
 
 /**
- * Sends pending jobs oldest first. Stops at the first connection problem (still offline) and
- * leaves the rest for the next attempt. Only one flush runs at a time.
- * Triggers (reconnect, app foreground) are wired up with the meal flow.
+ * Sends pending jobs oldest first, re-reading the queue each time so jobs added mid-flush
+ * are included. Stops at the first connection problem and leaves the rest for later.
+ * Concurrent callers share the flush already running instead of starting another.
  */
-export async function flushQueue(send: SendJob): Promise<void> {
-  if (flushing) return;
-  flushing = true;
-  const queue = useOfflineQueue.getState();
+export function flushQueue(send: SendJob): Promise<void> {
+  currentFlush ??= drain(send).finally(() => {
+    currentFlush = null;
+  });
+  return currentFlush;
+}
 
-  try {
-    for (const job of [...queue.pending]) {
-      try {
-        await send(job);
-        queue.markSent(job.id);
-      } catch (error) {
-        const apiError = toApiError(error);
-        if (apiError.isRetryable) {
-          queue.markRetryLater(job.id, apiError);
-          return; // still offline or the server is struggling; try again later
-        }
-        queue.markFailed(job.id, apiError);
+async function drain(send: SendJob): Promise<void> {
+  const queue = useOfflineQueue.getState();
+  for (let job = queue.pending.at(0); job; job = useOfflineQueue.getState().pending.at(0)) {
+    try {
+      await send(job);
+      queue.markSent(job.id);
+    } catch (error) {
+      const apiError = toApiError(error);
+      if (apiError.isRetryable) {
+        queue.markRetryLater(job.id, apiError);
+        return; // still offline or the server is struggling; try again later
       }
+      queue.markFailed(job.id, apiError);
     }
-  } finally {
-    flushing = false;
   }
 }

@@ -8,7 +8,8 @@ import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ErrorState } from '@/components/ui';
+import { ErrorState, ToastHost } from '@/components/ui';
+import { useMealSync } from '@/features/meals/meal-sync';
 import { useOnboardingDraft } from '@/features/onboarding/onboarding-draft';
 import { queryClient } from '@/lib/api/query-client';
 import { useProfileStore } from '@/lib/storage/profile-store';
@@ -34,6 +35,7 @@ export default function RootLayout() {
         <BottomSheetModalProvider>
           <StatusBar style="dark" />
           {hydrated ? <AppNavigator /> : null}
+          <ToastHost />
         </BottomSheetModalProvider>
       </QueryClientProvider>
     </GestureHandlerRootView>
@@ -47,6 +49,7 @@ export default function RootLayout() {
 function AppNavigator() {
   const hasProfile = useProfileStore((state) => state.profile !== null);
   useProfileSync();
+  useMealSync();
 
   return (
     <Stack
