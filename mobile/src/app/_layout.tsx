@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ErrorState, ToastHost } from '@/components/ui';
 import { useMealSync } from '@/features/meals/meal-sync';
+import { useMealReminders } from '@/features/today/meal-reminders';
 import { useOnboardingDraft } from '@/features/onboarding/onboarding-draft';
 import { queryClient } from '@/lib/api/query-client';
 import { useProfileStore } from '@/lib/storage/profile-store';
@@ -50,6 +51,7 @@ function AppNavigator() {
   const hasProfile = useProfileStore((state) => state.profile !== null);
   useProfileSync();
   useMealSync();
+  useMealReminders();
 
   return (
     <Stack

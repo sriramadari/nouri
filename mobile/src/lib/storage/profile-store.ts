@@ -14,6 +14,8 @@ interface ProfileState {
   targets: Targets | null;
   /** Out of range lab results that shape the focus areas. */
   flaggedMarkers: FlaggedMarker[];
+  /** When onboarding finished; day one gets a welcome instead of judgement. */
+  onboardedAt: string | null;
   /** True until the server has confirmed the latest profile (e.g. saved while offline). */
   needsSync: boolean;
   completeOnboarding: (profile: Profile, targets: Targets, flaggedMarkers: FlaggedMarker[]) => void;
@@ -28,12 +30,26 @@ export const useProfileStore = create<ProfileState>()(
       profile: null,
       targets: null,
       flaggedMarkers: [],
+      onboardedAt: null,
       needsSync: false,
       completeOnboarding: (profile, targets, flaggedMarkers) =>
-        set({ profile, targets, flaggedMarkers, needsSync: true }),
+        set({
+          profile,
+          targets,
+          flaggedMarkers,
+          onboardedAt: new Date().toISOString(),
+          needsSync: true,
+        }),
       // The server recalculates targets; its numbers win if the two copies ever differ.
       markSynced: (targets) => set({ targets, needsSync: false }),
-      reset: () => set({ profile: null, targets: null, flaggedMarkers: [], needsSync: false }),
+      reset: () =>
+        set({
+          profile: null,
+          targets: null,
+          flaggedMarkers: [],
+          onboardedAt: null,
+          needsSync: false,
+        }),
     }),
     { name: 'nouri.profile', storage: persistStorage },
   ),

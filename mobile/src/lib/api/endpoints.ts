@@ -6,8 +6,11 @@ import type {
   HealthStatus,
   MealDraft,
   MealResponse,
+  PhrasedInsight,
+  PhraseInsightInput,
   Profile,
   ReportResponse,
+  Streak,
   UserResponse,
 } from './types';
 
@@ -35,6 +38,18 @@ export const api = {
   /** Safe to retry: the server stores each clientRequestId once. */
   saveMeal: (meal: CreateMealInput) =>
     apiRequest<MealResponse>({ method: 'POST', path: '/meals', body: meal, retries: 2 }),
+
+  getStreak: () =>
+    apiRequest<Streak>({ path: '/meals/streak', query: { tzOffsetMinutes: utcOffsetMinutes() } }),
+
+  /** Never fails on the server side: an AI problem returns the rules draft instead. */
+  phraseInsight: (input: PhraseInsightInput) =>
+    apiRequest<PhrasedInsight>({
+      method: 'POST',
+      path: '/insights',
+      body: input,
+      timeoutMs: 30_000,
+    }),
 
   getMeals: (date: Date = new Date()) =>
     apiRequest<DayMeals>({

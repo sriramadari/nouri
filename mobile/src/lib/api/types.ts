@@ -111,3 +111,22 @@ export interface DayMeals {
   meals: MealResponse[];
   totals: Nutrition;
 }
+
+export interface Streak {
+  current: number;
+  best: number;
+  loggedToday: boolean;
+}
+
+export interface PhrasedInsight {
+  message: string;
+  why: string;
+  source: 'ai' | 'rules';
+}
+
+export interface PhraseInsightInput {
+  date: string;
+  slot: 'MORNING' | 'AFTERNOON' | 'EVENING';
+  draft: { message: string; why: string };
+  facts: { caloriesEaten: number; proteinEaten: number; flaggedMarkers: string[] };
+}

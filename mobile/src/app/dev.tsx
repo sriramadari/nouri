@@ -21,6 +21,8 @@ import { API_URL } from '@/lib/config';
 import { getDeviceId } from '@/lib/storage/device-id';
 import { useProfileStore } from '@/lib/storage/profile-store';
 import { useOnboardingDraft } from '@/features/onboarding/onboarding-draft';
+import { sendTestReminder } from '@/features/today/meal-reminders';
+import { useCelebration } from '@/features/today/celebration-store';
 import { spacing } from '@/theme';
 
 /**
@@ -37,6 +39,7 @@ function DevGallery() {
   const { sheet } = useLocalSearchParams<{ sheet?: string }>();
   const [sheetOpen, setSheetOpen] = useState(sheet === 'open');
   const [ringValue, setRingValue] = useState(820);
+  const [reminderStatus, setReminderStatus] = useState<string | null>(null);
   const health = useQuery({ queryKey: ['health'], queryFn: api.health });
   const me = useQuery({ queryKey: ['me'], queryFn: api.getMe });
   const deviceId = useQuery({ queryKey: ['deviceId'], queryFn: getDeviceId });
@@ -75,6 +78,24 @@ function DevGallery() {
           variant="secondary"
           icon="refresh"
           onPress={() => health.refetch()}
+        />
+        <Button
+          label="Send a test reminder in 10 s"
+          variant="ghost"
+          onPress={async () => {
+            const sent = await sendTestReminder(10);
+            setReminderStatus(sent ? 'Scheduled. Lock the phone and wait.' : 'Not available here.');
+          }}
+        />
+        {reminderStatus ? (
+          <Text variant="caption" color="textSecondary">
+            {reminderStatus}
+          </Text>
+        ) : null}
+        <Button
+          label="Replay goal celebration"
+          variant="ghost"
+          onPress={() => useCelebration.getState().start(`replay-${Date.now()}`)}
         />
         <Button
           label="Reset onboarding"
