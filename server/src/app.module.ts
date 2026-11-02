@@ -8,6 +8,7 @@ import { DeviceGuard } from './common/identity/device.guard.js';
 import { validateEnv } from './config/env.schema.js';
 import { DatabaseModule } from './database/database.module.js';
 import { HealthModule } from './health/health.module.js';
+import { InsightsModule } from './insights/insights.module.js';
 import { MealsModule } from './meals/meals.module.js';
 import { ReportsModule } from './reports/reports.module.js';
 import { UsersModule } from './users/users.module.js';
@@ -21,6 +22,7 @@ import { UsersModule } from './users/users.module.js';
     UsersModule,
     MealsModule,
     ReportsModule,
+    InsightsModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: DeviceGuard },
