@@ -46,6 +46,13 @@ const ICONS = {
     </>
   ),
   chevronRight: <Path d="m9 18 6-6-6-6" />,
+  chevronLeft: <Path d="m15 18-6-6 6-6" />,
+  file: (
+    <>
+      <Path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+      <Path d="M14 2v5h6M9 13h6M9 17h6" />
+    </>
+  ),
   cloudOff: (
     <>
       <Path d="m2 2 20 20" />
