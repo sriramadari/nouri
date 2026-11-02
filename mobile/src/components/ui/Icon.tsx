@@ -47,6 +47,15 @@ const ICONS = {
   ),
   chevronRight: <Path d="m9 18 6-6-6-6" />,
   chevronLeft: <Path d="m15 18-6-6 6-6" />,
+  minus: <Path d="M5 12h14" />,
+  image: (
+    <>
+      <Path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" />
+      <Circle cx={9} cy={9} r={2} />
+      <Path d="m21 15-5-5L5 21" />
+    </>
+  ),
+  edit: <Path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />,
   file: (
     <>
       <Path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />

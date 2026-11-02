@@ -5,6 +5,7 @@ import {
   type BottomSheetFooterProps,
   BottomSheetModal,
   BottomSheetScrollView,
+  BottomSheetTextInput,
 } from '@gorhom/bottom-sheet';
 import { type ReactNode, useCallback, useEffect, useRef } from 'react';
 import { Modal, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
@@ -13,6 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { cardShadow, colors, MIN_TAP_TARGET, radii, spacing, useIsWideScreen } from '@/theme';
 
 import { Icon } from './Icon';
+import { TextInputComponentContext } from './TextField';
 import { Text } from './Text';
 
 export interface AdaptiveSheetProps {
@@ -79,6 +81,9 @@ function BottomSheet({ visible, onClose, title, children, footer }: AdaptiveShee
       enableDynamicSizing
       backdropComponent={renderBackdrop}
       footerComponent={footer ? renderFooter : undefined}
+      keyboardBehavior="interactive"
+      keyboardBlurBehavior="restore"
+      android_keyboardInputMode="adjustResize"
       backgroundStyle={styles.sheetBackground}
       handleIndicatorStyle={styles.handle}
       accessibilityLabel={title}
@@ -90,7 +95,9 @@ function BottomSheet({ visible, onClose, title, children, footer }: AdaptiveShee
         ]}
       >
         <SheetHeader title={title} onClose={onClose} />
-        {children}
+        <TextInputComponentContext.Provider value={BottomSheetTextInput}>
+          {children}
+        </TextInputComponentContext.Provider>
       </BottomSheetScrollView>
     </BottomSheetModal>
   );
