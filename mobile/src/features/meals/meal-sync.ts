@@ -7,6 +7,7 @@ import { api } from '@/lib/api/endpoints';
 import { queryClient } from '@/lib/api/query-client';
 import type { CreateMealInput, DayMeals, MealResponse } from '@/lib/api/types';
 import { localDateKey } from '@/lib/dates';
+import { useMealTimes } from '@/lib/storage/meal-times-store';
 import { flushQueue, type QueuedJob, useOfflineQueue } from '@/lib/storage/offline-queue';
 
 import { sumNutrition } from './meal-math';
@@ -16,6 +17,7 @@ export const mealsQueryKey = (dateKey: string) => ['meals', dateKey] as const;
 async function sendMeal(job: QueuedJob): Promise<void> {
   const saved = await api.saveMeal(job.payload as CreateMealInput);
   addToDayCache(saved);
+  queryClient.invalidateQueries({ queryKey: ['streak'] });
 }
 
 /** Puts a saved meal straight into the cached day, so it never flickers out of the list. */
@@ -36,6 +38,7 @@ export const syncMeals = () => flushQueue(sendMeal);
  */
 export async function saveMeal(meal: CreateMealInput): Promise<'saved' | 'queued'> {
   useOfflineQueue.getState().enqueue({ id: meal.clientRequestId, kind: 'meal', payload: meal });
+  useMealTimes.getState().record(meal.eatenAt);
   await syncMeals();
 
   const { pending, failed } = useOfflineQueue.getState();
