@@ -19,6 +19,8 @@ import { toApiError } from '@/lib/api/api-error';
 import { api } from '@/lib/api/endpoints';
 import { API_URL } from '@/lib/config';
 import { getDeviceId } from '@/lib/storage/device-id';
+import { useProfileStore } from '@/lib/storage/profile-store';
+import { useOnboardingDraft } from '@/features/onboarding/onboarding-draft';
 import { spacing } from '@/theme';
 
 /**
@@ -73,6 +75,14 @@ function DevGallery() {
           variant="secondary"
           icon="refresh"
           onPress={() => health.refetch()}
+        />
+        <Button
+          label="Reset onboarding"
+          variant="ghost"
+          onPress={() => {
+            useOnboardingDraft.getState().reset();
+            useProfileStore.getState().reset();
+          }}
         />
       </Card>
 
