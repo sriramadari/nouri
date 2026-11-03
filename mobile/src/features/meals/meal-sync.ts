@@ -18,6 +18,7 @@ async function sendMeal(job: QueuedJob): Promise<void> {
   const saved = await api.saveMeal(job.payload as CreateMealInput);
   addToDayCache(saved);
   queryClient.invalidateQueries({ queryKey: ['streak'] });
+  queryClient.invalidateQueries({ queryKey: ['week'] });
 }
 
 /** Puts a saved meal straight into the cached day, so it never flickers out of the list. */

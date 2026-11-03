@@ -4,6 +4,7 @@ import { ApiError } from './api-error';
 import type {
   CreateMealInput,
   DayMeals,
+  DayTotals,
   HealthStatus,
   MealDraft,
   MealResponse,
@@ -49,6 +50,12 @@ export const api = {
   /** Safe to retry: the server stores each clientRequestId once. */
   saveMeal: (meal: CreateMealInput) =>
     apiRequest<MealResponse>({ method: 'POST', path: '/meals', body: meal, retries: 2 }),
+
+  getWeekSummary: () =>
+    apiRequest<{ days: DayTotals[] }>({
+      path: '/meals/summary',
+      query: { days: 7, tzOffsetMinutes: utcOffsetMinutes() },
+    }),
 
   getStreak: () =>
     apiRequest<Streak>({ path: '/meals/streak', query: { tzOffsetMinutes: utcOffsetMinutes() } }),

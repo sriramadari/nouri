@@ -130,3 +130,10 @@ export interface PhraseInsightInput {
   draft: { message: string; why: string };
   facts: { caloriesEaten: number; proteinEaten: number; flaggedMarkers: string[] };
 }
+
+export interface DayTotals {
+  date: string;
+  meals: number;
+  calories: number;
+  proteinG: number;
+}

@@ -20,6 +20,7 @@ import { FocusSummary } from './components/FocusSummary';
 import { StreakBadge } from './components/StreakBadge';
 import { useAssistantMessage } from './use-assistant-message';
 import { useStreak } from './use-streak';
+import { WeeklyWins } from './components/WeeklyWins';
 
 const GREETINGS = { MORNING: 'Good morning', AFTERNOON: 'Good afternoon', EVENING: 'Good evening' };
 
@@ -101,6 +102,7 @@ export function TodayScreen() {
           error={today.error}
           onRetry={() => today.refetch()}
         />
+        <WeeklyWins targets={targets} />
         <FocusSummary areas={focusAreas} />
 
         {__DEV__ ? (
