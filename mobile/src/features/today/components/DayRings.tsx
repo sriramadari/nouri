@@ -1,5 +1,5 @@
 import { Link } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
 
 import { Button, Card, ProgressRing, Text } from '@/components/ui';
 import type { Nutrition, Targets } from '@/lib/api/types';
@@ -9,6 +9,8 @@ const kcal = (value: number) => Math.round(value).toLocaleString('en-IN');
 
 /** Calories and protein against today's targets, showing what is left rather than what is used. */
 export function DayRings({ eaten, targets }: { eaten: Nutrition; targets: Targets }) {
+  // Smaller rings on narrow phones (e.g. 320 px wide) so both always fit side by side.
+  const compact = useWindowDimensions().width < 380;
   const caloriesLeft = targets.calories - eaten.calories;
   const proteinLeft = Math.round(targets.proteinG - eaten.proteinG);
 
@@ -18,7 +20,8 @@ export function DayRings({ eaten, targets }: { eaten: Nutrition; targets: Target
         <ProgressRing
           value={eaten.calories}
           max={targets.calories}
-          size={150}
+          size={compact ? 128 : 150}
+          strokeWidth={compact ? 12 : 14}
           color={caloriesLeft < 0 ? 'warning' : 'primarySoft'}
           accessibilityLabel={`${kcal(eaten.calories)} of ${kcal(targets.calories)} calories eaten`}
         >
@@ -30,8 +33,8 @@ export function DayRings({ eaten, targets }: { eaten: Nutrition; targets: Target
         <ProgressRing
           value={eaten.proteinG}
           max={targets.proteinG}
-          size={112}
-          strokeWidth={11}
+          size={compact ? 96 : 112}
+          strokeWidth={compact ? 9 : 11}
           color="accent"
           accessibilityLabel={`${Math.round(eaten.proteinG)} of ${targets.proteinG} grams of protein`}
         >

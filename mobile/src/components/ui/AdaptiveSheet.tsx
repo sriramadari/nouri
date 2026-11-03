@@ -8,7 +8,15 @@ import {
   BottomSheetTextInput,
 } from '@gorhom/bottom-sheet';
 import { type ReactNode, useCallback, useEffect, useRef } from 'react';
-import { Modal, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import {
+  BackHandler,
+  Modal,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { cardShadow, colors, MIN_TAP_TARGET, radii, spacing, useIsWideScreen } from '@/theme';
@@ -49,6 +57,16 @@ function BottomSheet({ visible, onClose, title, children, footer }: AdaptiveShee
     if (visible) ref.current?.present();
     else ref.current?.dismiss();
   }, [visible]);
+
+  // Android back button closes the sheet first, like every native sheet does.
+  useEffect(() => {
+    if (!visible) return;
+    const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+      onClose();
+      return true;
+    });
+    return () => subscription.remove();
+  }, [visible, onClose]);
 
   const renderBackdrop = useCallback(
     (backdropProps: BottomSheetBackdropProps) => (
