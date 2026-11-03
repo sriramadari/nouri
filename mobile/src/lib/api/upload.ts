@@ -1,3 +1,4 @@
+import { File as DeviceFile } from 'expo-file-system';
 import { Platform } from 'react-native';
 
 import { UPLOAD_FIELD } from './upload-field';
@@ -26,7 +27,10 @@ const MIME_BY_EXTENSION: Record<string, string> = {
 /**
  * Builds the multipart body the API expects.
  * - Web: a real File or Blob (blob: and data: URLs from the camera or recorder are fetched).
- * - Native: a { uri, name, type } descriptor; React Native streams the file from disk.
+ * - Native: a part whose bytes are read from disk with expo-file-system. Expo's fetch (the
+ *   global fetch on native since SDK 52) rejects React Native's classic { uri, name, type }
+ *   descriptor with "Unsupported FormDataPart implementation"; it accepts any object with a
+ *   bytes() method and takes the filename and content type from its name and type.
  */
 export async function buildUploadForm(picked: PickedFile): Promise<FormData> {
   const form = new FormData();
@@ -39,8 +43,10 @@ export async function buildUploadForm(picked: PickedFile): Promise<FormData> {
     const blob = await (await fetch(picked.uri)).blob();
     form.append(UPLOAD_FIELD, new File([blob], picked.name, { type: blob.type || type }));
   } else {
-    // React Native's FormData accepts this descriptor; the DOM typings only know Blob.
-    form.append(UPLOAD_FIELD, { uri: picked.uri, name: picked.name, type } as unknown as Blob);
+    const file = new DeviceFile(picked.uri);
+    // Our own name and type: Android can report odd types for .m4a (e.g. audio/mp4a-latm).
+    const part = { name: picked.name, type, bytes: () => file.bytes() };
+    form.append(UPLOAD_FIELD, part as unknown as Blob);
   }
   return form;
 }

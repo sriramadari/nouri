@@ -86,7 +86,9 @@ async function send<T>({
       body: form ?? (body !== undefined ? JSON.stringify(body) : undefined),
       signal: controller.signal,
     });
-  } catch {
+  } catch (error) {
+    // The real cause (DNS, refused connection, unreadable file) only shows in development.
+    if (__DEV__) console.warn(`Request to ${path} failed:`, error);
     throw controller.signal.aborted
       ? new ApiError(0, 'TIMEOUT', 'Katori is taking too long to respond. Please try again.')
       : new ApiError(0, 'NETWORK_ERROR', "You're offline or the server can't be reached.");
