@@ -8,7 +8,9 @@
     "scheme": "nouri",
     "userInterfaceStyle": "light",
     "ios": {
-      "icon": "./assets/images/icon.png"
+      "icon": "./assets/images/icon.png",
+      "bundleIdentifier": "app.nouri.mobile",
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
@@ -17,7 +19,9 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "app.nouri.mobile",
+      "versionCode": 1
     },
     "web": {
       "output": "single",
@@ -33,11 +37,45 @@
           "imageWidth": 140
         }
       ],
-      "expo-audio"
+      "expo-audio",
+      "expo-build-properties",
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Nouri uses the camera to snap your meals and lab reports.",
+          "photosPermission": "Nouri reads the meal or report photo you choose.",
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Nouri listens to short voice notes about what you ate.",
+          "recordAudioAndroid": true
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/android-icon-monochrome.png",
+          "color": "#2F7D57"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableMinifyInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true
+          }
+        }
+      ],
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "description": "Eat smart, feel better. Snap or speak your meals; Nouri tracks, explains and nudges."
   }
 }
