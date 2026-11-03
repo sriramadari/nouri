@@ -55,7 +55,7 @@ npx serve dist
 
 - Logging is always one tap away, in the middle of the tab bar.
 - AI drafts the meal; totals are calculated in code; unsure items are flagged.
-- Voice: it listens first and only estimates from words it heard.
+- Voice: it writes down what it heard first, then estimates only from those words.
 - Logging works offline and syncs later; a double tap can't save twice.
 
 ## 4 · Today, the assistant (1:45 – 2:20)

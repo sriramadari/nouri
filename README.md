@@ -160,12 +160,16 @@ idempotency keys; an indexed `(userId, eatenAt)` for day queries; AI provider sw
 - **Contracts:** every answer is validated with Zod. A malformed answer gets one retry, then a
   clear error. Gemini is sent a shape only schema (some models reject `minLength`); Zod still
   enforces every limit.
-- **Resilience:** timeout on every call; a model chain (`GEMINI_MODELS`) that moves on when a
-  model is overloaded (503), out of quota (429), retired (404) or slow; a 400 is not retried.
-- **Voice is two calls on purpose.** Asked to listen and estimate at once, the model invented a
-  meal from pure silence. Now it first transcribes ("is there speech, what was said"), and food is
-  estimated only from words that were heard. The app also shows "Heard: …" so mishearings are
-  caught before saving, and phones check for silence before uploading.
+- **Resilience:** one time budget per AI task (`AI_TIMEOUT_MS`, 60 s) across a model chain
+  (`GEMINI_MODELS`) that moves on when a model is overloaded (503), out of quota (429), retired
+  (404) or slow. Each model gets an even share of the time left and the last gets all of it, so
+  the server always answers before the app stops waiting; a 400 is not retried.
+- **Voice listens before it estimates, in one call.** Asked loosely to "listen and estimate", a
+  model can invent a meal from silence. The voice answer is ordered: speech detected, then the
+  exact transcript, then foods named in that transcript; the server drops any foods when nothing
+  was heard. (An earlier version used two calls, listen then estimate, which doubled the wait
+  when Gemini was busy.) The app shows "Heard: …" so mishearings are caught before saving, and
+  phones check for silence before uploading.
 - **Reports:** the model only copies what is printed. Code matches names (aliases like
   "Glucose - Fasting", "FBS"), converts units (mmol/L, mmol/mol, nmol/L, g/L), decides status
   (lab range first, sex aware defaults otherwise) and attaches reviewed guidance.
@@ -178,7 +182,7 @@ idempotency keys; an indexed `(userId, eatenAt)` for day queries; AI provider sw
 | Area       | Cases                                                                                                                                                                                                                             |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Meal photo | Not food, blurry, low confidence items highlighted for confirmation, AI timeout or busy (retry with the same photo), camera permission denied (Settings, choose a photo, or add by hand)                                          |
-| Voice      | Silence (checked on the phone and by the listen first step), too short, unclear speech, microphone denied, 30 s limit with auto stop, double stop guarded                                                                         |
+| Voice      | Silence (checked on the phone and by the server's speech check), too short, unclear speech, microphone denied, 30 s limit with auto stop, double stop guarded                                                                     |
 | Saving     | Offline: kept on the phone, counted in today, "Waiting to sync", synced on reconnect or app foreground; double tap: button disabled plus an idempotency key created with the draft; server rejection shown, never retried forever |
 | Reports    | Not a report, unreadable, partial extraction (lists what was skipped), unknown markers (judged by the lab's printed range), unit differences, repeated markers, cancelled picker                                                  |
 | Onboarding | Validation with friendly messages after the first Continue, back keeps answers, restart resumes at the last step, missing answer at the end sends the person back, offline finish syncs later                                     |

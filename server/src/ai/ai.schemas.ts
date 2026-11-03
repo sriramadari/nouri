@@ -24,8 +24,8 @@ export const mealAnalysisSchema = z.object({
 });
 
 /**
- * Step one of voice logging: only listen. Kept separate from estimation because a model asked
- * for both at once will invent a meal out of silence.
+ * What was heard in a voice note. These fields come first in the voice answer so the model
+ * writes down the words before it estimates any food (see the voice prompt).
  */
 export const transcriptionSchema = z.object({
   speechDetected: z
@@ -64,7 +64,6 @@ export const insightSchema = z.object({
 
 export type MealItem = z.infer<typeof mealItemSchema>;
 export type MealAnalysis = z.infer<typeof mealAnalysisSchema>;
-export type Transcription = z.infer<typeof transcriptionSchema>;
 export type VoiceMealAnalysis = z.infer<typeof voiceMealAnalysisSchema>;
 export type ExtractedMarker = z.infer<typeof extractedMarkerSchema>;
 export type ReportExtraction = z.infer<typeof reportExtractionSchema>;

@@ -28,7 +28,8 @@ export const envSchema = z
       )
       .pipe(z.array(z.string()).min(1, 'List at least one Gemini model.')),
     /** Per call limit. Successful answers take 4 to 8 seconds; a hung model should not hold users for long. */
-    AI_TIMEOUT_MS: z.coerce.number().int().min(1000).max(120_000).default(20_000),
+    // Total time for one AI task across the model chain; the app waits 75 s for a meal.
+    AI_TIMEOUT_MS: z.coerce.number().int().min(1000).max(120_000).default(60_000),
   })
   .refine((env) => env.AI_PROVIDER !== 'gemini' || env.GEMINI_API_KEY, {
     message: 'GEMINI_API_KEY is required when AI_PROVIDER is "gemini"',

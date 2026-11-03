@@ -12,16 +12,12 @@ import {
   mealAnalysisSchema,
   type ReportExtraction,
   reportExtractionSchema,
-  transcriptionSchema,
   type VoiceMealAnalysis,
+  voiceMealAnalysisSchema,
 } from '../ai.schemas.js';
 import { buildInsightUserPrompt, INSIGHT_SYSTEM_PROMPT } from '../prompts/insight.prompt.js';
 import { MEAL_IMAGE_SYSTEM_PROMPT, MEAL_IMAGE_USER_PROMPT } from '../prompts/meal-image.prompt.js';
-import {
-  MEAL_TEXT_SYSTEM_PROMPT,
-  TRANSCRIBE_SYSTEM_PROMPT,
-  TRANSCRIBE_USER_PROMPT,
-} from '../prompts/meal-voice.prompt.js';
+import { VOICE_MEAL_SYSTEM_PROMPT, VOICE_MEAL_USER_PROMPT } from '../prompts/meal-voice.prompt.js';
 import { REPORT_SYSTEM_PROMPT, REPORT_USER_PROMPT } from '../prompts/report.prompt.js';
 import { toResponseSchema } from './response-schema.js';
 
@@ -31,7 +27,13 @@ export type GenerateContentFn = (params: GenerateContentParameters) => Promise<{
 export interface GeminiOptions {
   /** Tried in order. Later models are only used when an earlier one is overloaded or slow. */
   models: string[];
+  /**
+   * Total time for one task across every model and retry, so the server always answers before
+   * the app stops waiting. Each model gets an even share of what is left; the last gets all.
+   */
   timeoutMs: number;
+  /** Skip a fallback model when less time than this is left. Defaults to 3 s. */
+  minFallbackMs?: number;
 }
 
 interface JsonRequest<T> {
@@ -39,10 +41,18 @@ interface JsonRequest<T> {
   schema: ZodType<T>;
   systemInstruction: string;
   parts: Part[];
+  /** Overrides the default time budget, e.g. shorter for a nice-to-have like insights. */
+  budgetMs?: number;
 }
 
 /** One retry for a malformed answer, as agreed in the AI contract. */
 const ATTEMPTS_PER_MODEL = 2;
+const DEFAULT_MIN_FALLBACK_MS = 3_000;
+/**
+ * Insights only reword a message the rules engine already wrote, and the app shows that
+ * message if this is slow, so they get a short budget that fits the app's 30 s wait.
+ */
+const INSIGHT_BUDGET_MS = 20_000;
 
 export class GeminiProvider implements AiProvider {
   private readonly logger = new Logger(GeminiProvider.name);
@@ -61,25 +71,22 @@ export class GeminiProvider implements AiProvider {
     });
   }
 
-  /** Two calls on purpose: listen first, then estimate only from words that were heard. */
+  /**
+   * One call, answered in order: speech detected, transcript, then foods from that transcript.
+   * Voice used to take two calls (listen, then estimate); with a busy model that doubled the
+   * wait past the app's timeout. The server still drops any foods when nothing was heard.
+   */
   async parseMealVoice(audio: Buffer, mimeType: string): Promise<VoiceMealAnalysis> {
-    const heard = await this.generateJson({
-      task: 'voice transcript',
-      schema: transcriptionSchema,
-      systemInstruction: TRANSCRIBE_SYSTEM_PROMPT,
-      parts: [mediaPart(audio, mimeType), { text: TRANSCRIBE_USER_PROMPT }],
+    const result = await this.generateJson({
+      task: 'voice meal',
+      schema: voiceMealAnalysisSchema,
+      systemInstruction: VOICE_MEAL_SYSTEM_PROMPT,
+      parts: [mediaPart(audio, mimeType), { text: VOICE_MEAL_USER_PROMPT }],
     });
-    if (!heard.speechDetected || heard.transcript.trim().length === 0) {
-      return { ...heard, issue: 'UNCLEAR', items: [] };
+    if (!result.speechDetected || result.transcript.trim().length === 0) {
+      return { ...result, issue: 'UNCLEAR', items: [] };
     }
-
-    const meal = await this.generateJson({
-      task: 'meal text',
-      schema: mealAnalysisSchema,
-      systemInstruction: MEAL_TEXT_SYSTEM_PROMPT,
-      parts: [{ text: heard.transcript }],
-    });
-    return { ...heard, ...meal };
+    return result;
   }
 
   extractReport(file: Buffer, mimeType: string): Promise<ReportExtraction> {
@@ -97,16 +104,25 @@ export class GeminiProvider implements AiProvider {
       schema: insightSchema,
       systemInstruction: INSIGHT_SYSTEM_PROMPT,
       parts: [{ text: buildInsightUserPrompt(context) }],
+      budgetMs: Math.min(INSIGHT_BUDGET_MS, this.options.timeoutMs),
     });
   }
 
   /** Tries each model in turn, moving on only when a model is overloaded or times out. */
   private async generateJson<T>(request: JsonRequest<T>): Promise<T> {
+    const { models } = this.options;
+    const deadline = Date.now() + (request.budgetMs ?? this.options.timeoutMs);
     let lastError: AiError | undefined;
 
-    for (const model of this.options.models) {
+    for (const [index, model] of models.entries()) {
+      const remaining = deadline - Date.now();
+      // The first model always gets a try; a fallback only if there is time to finish.
+      if (index > 0 && remaining < (this.options.minFallbackMs ?? DEFAULT_MIN_FALLBACK_MS)) break;
+      // An even share keeps one hung model from using up the whole budget; when earlier
+      // models fail fast (rate limited, overloaded), the later ones get the time instead.
+      const timeoutMs = Math.floor(remaining / (models.length - index));
       try {
-        return await this.generateWithModel(model, request);
+        return await this.generateWithModel(model, request, timeoutMs);
       } catch (error) {
         const retryable =
           error instanceof AiError &&
@@ -117,13 +133,18 @@ export class GeminiProvider implements AiProvider {
       }
     }
 
-    throw lastError ?? new AiError('UNAVAILABLE', 'No AI model is configured.');
+    throw lastError ?? new AiError('TIMEOUT', `The ${request.task} ran out of time.`);
   }
 
   /** Calls one model and validates the answer, retrying once if it is malformed. */
-  private async generateWithModel<T>(model: string, request: JsonRequest<T>): Promise<T> {
+  private async generateWithModel<T>(
+    model: string,
+    request: JsonRequest<T>,
+    timeoutMs: number,
+  ): Promise<T> {
+    const deadline = Date.now() + timeoutMs;
     for (let attempt = 1; attempt <= ATTEMPTS_PER_MODEL; attempt++) {
-      const text = await this.callModel(model, request);
+      const text = await this.callModel(model, request, Math.max(deadline - Date.now(), 1));
       const parsed = parseJson(text, request.schema);
       if (parsed.success) return parsed.data;
       this.logger.warn(`${request.task}: ${model} attempt ${attempt} returned invalid JSON`);
@@ -131,9 +152,13 @@ export class GeminiProvider implements AiProvider {
     throw new AiError('INVALID_RESPONSE', `The ${request.task} answer did not match the schema.`);
   }
 
-  private async callModel<T>(model: string, request: JsonRequest<T>): Promise<string> {
+  private async callModel<T>(
+    model: string,
+    request: JsonRequest<T>,
+    timeoutMs: number,
+  ): Promise<string> {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), this.options.timeoutMs);
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
       const response = await this.generateContent({
