@@ -1,5 +1,6 @@
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { Button, Card, Screen, Text } from '@/components/ui';
 import { buildFocusAreas } from '@/lib/health/focus-areas';
@@ -36,51 +37,57 @@ export function PlanScreen() {
 
   return (
     <Screen>
-      <View style={styles.intro}>
-        <Text variant="label" color="primary">
-          YOUR PLAN
+      <Animated.View entering={FadeInDown.duration(500)} style={styles.intro}>
+        <Text variant="eyebrow" color="brandText">
+          Your plan · {goalTitle(profile.goal)}
         </Text>
         <Text variant="title" accessibilityRole="header">
-          {profile.name}, here’s your plan
+          {profile.name}, this is your daily katori
         </Text>
-        <Text color="textSecondary">Goal: {goalTitle(profile.goal).toLowerCase()}</Text>
-      </View>
+      </Animated.View>
 
-      <View style={styles.targets}>
-        <TargetCard value={formatNumber(targets.calories)} unit="kcal a day" label="Calories" />
-        <TargetCard value={String(targets.proteinG)} unit="g a day" label="Protein" />
-      </View>
+      <Animated.View entering={FadeInDown.delay(150).duration(500)} style={styles.hero}>
+        <TargetFigure value={formatNumber(targets.calories)} unit="kcal" label="Calories a day" />
+        <View style={styles.heroDivider} />
+        <TargetFigure value={String(targets.proteinG)} unit="grams" label="Protein a day" />
+      </Animated.View>
 
-      <Card>
-        <Text variant="heading">How Katori worked this out</Text>
-        <Text color="textSecondary">
-          Your body uses about {formatNumber(breakdown.bmr)} kcal at rest and about{' '}
-          {formatNumber(breakdown.maintenanceCalories)} kcal on a typical day (
-          {activityTitle(profile.activityLevel).toLowerCase()}).{' '}
-          {caloriesReason(breakdown.deficit, targets.calories, profile.goal === 'LOSE_WEIGHT')}
-        </Text>
-        <Text color="textSecondary">
-          Protein is {profile.goal === 'LOSE_WEIGHT' ? '1.2' : '1'} g for each kg you weigh
-          {profile.goal === 'LOSE_WEIGHT' ? ', a little higher to protect muscle.' : '.'}
-        </Text>
-      </Card>
+      <Animated.View entering={FadeInDown.delay(300).duration(500)}>
+        <Card tone="surfaceMuted" style={styles.maths}>
+          <Text variant="eyebrow" color="textSecondary">
+            How Katori worked this out
+          </Text>
+          <Text color="textSecondary">
+            Your body uses about {formatNumber(breakdown.bmr)} kcal at rest and about{' '}
+            {formatNumber(breakdown.maintenanceCalories)} kcal on a typical day (
+            {activityTitle(profile.activityLevel).toLowerCase()}).{' '}
+            {caloriesReason(breakdown.deficit, targets.calories, profile.goal === 'LOSE_WEIGHT')}
+          </Text>
+          <Text color="textSecondary">
+            Protein is {profile.goal === 'LOSE_WEIGHT' ? '1.2' : '1'} g for each kg you weigh
+            {profile.goal === 'LOSE_WEIGHT' ? ', a little higher to protect muscle.' : '.'}
+          </Text>
+        </Card>
+      </Animated.View>
 
       <View style={styles.focus}>
         <Text variant="heading" accessibilityRole="header">
-          Your focus
+          Focus on these, in this order
         </Text>
         {focusAreas.map((area, index) => (
-          <Card key={area.id} style={styles.focusCard}>
-            <View style={styles.number}>
-              <Text variant="label" color="textOnPrimary">
-                {index + 1}
-              </Text>
-            </View>
+          <Animated.View
+            key={area.id}
+            entering={FadeInDown.delay(450 + index * 120).duration(500)}
+            style={styles.focusRow}
+          >
+            <Text variant="display" color="brand" style={styles.numeral}>
+              {index + 1}
+            </Text>
             <View style={styles.focusText}>
               <Text variant="bodyStrong">{area.title}</Text>
               <Text color="textSecondary">{area.why}</Text>
             </View>
-          </Card>
+          </Animated.View>
         ))}
       </View>
 
@@ -99,33 +106,37 @@ function caloriesReason(deficit: number, calories: number, losingWeight: boolean
   return `Katori keeps you at a safe minimum of ${formatNumber(calories)} kcal, so you still lose steadily.`;
 }
 
-function TargetCard({ value, unit, label }: { value: string; unit: string; label: string }) {
+function TargetFigure({ value, unit, label }: { value: string; unit: string; label: string }) {
   return (
-    <Card style={styles.targetCard} accessible accessibilityLabel={`${label}: ${value} ${unit}`}>
-      <Text variant="label" color="textSecondary">
-        {label.toUpperCase()}
+    <View style={styles.figure} accessible accessibilityLabel={`${label}: ${value} ${unit}`}>
+      <Text variant="eyebrow" color="textOnPrimaryMuted">
+        {label}
       </Text>
-      <Text variant="display" color="primary">
+      <Text variant="display" color="textOnPrimary">
         {value}
       </Text>
-      <Text color="textSecondary">{unit}</Text>
-    </Card>
+      <Text variant="heading" color="brand">
+        {unit}
+      </Text>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   intro: { gap: spacing.xs },
-  targets: { flexDirection: 'row', gap: spacing.md },
-  targetCard: { flex: 1, gap: spacing.xxs },
-  focus: { gap: spacing.md },
-  focusCard: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.md },
-  number: {
-    width: 28,
-    height: 28,
-    borderRadius: radii.pill,
+  hero: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    gap: spacing.lg,
+    padding: spacing.xl,
+    borderRadius: radii.xl,
     backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
-  focusText: { flex: 1, gap: spacing.xxs },
+  heroDivider: { width: StyleSheet.hairlineWidth, backgroundColor: colors.textOnPrimaryMuted },
+  figure: { flex: 1, gap: spacing.xs },
+  maths: { borderWidth: 0, shadowOpacity: 0, elevation: 0 },
+  focus: { gap: spacing.lg },
+  focusRow: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.md },
+  numeral: { width: 32, lineHeight: 42 },
+  focusText: { flex: 1, gap: spacing.xxs, paddingTop: spacing.xs },
 });

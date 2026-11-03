@@ -1,3 +1,4 @@
+import type { IconName } from '@/components/ui';
 import type { ActivityLevel, Goal } from '@/lib/api/types';
 
 /** Choices shown in onboarding, also used to describe the plan in the same words. */
@@ -17,17 +18,24 @@ export const ACTIVITY_OPTIONS: { value: ActivityLevel; title: string; descriptio
   },
 ];
 
-export const GOAL_OPTIONS: { value: Goal; title: string; description: string }[] = [
-  { value: 'LOSE_WEIGHT', title: 'Lose weight', description: 'Steadily, about 0.5 kg a week' },
+export const GOAL_OPTIONS: { value: Goal; title: string; description: string; icon: IconName }[] = [
+  {
+    value: 'LOSE_WEIGHT',
+    title: 'Lose weight',
+    description: 'Steadily, about 0.5 kg a week',
+    icon: 'scale',
+  },
   {
     value: 'CONTROL_SUGAR',
     title: 'Control blood sugar',
     description: 'Steadier energy and a better HbA1c',
+    icon: 'drop',
   },
   {
     value: 'EAT_BETTER',
     title: 'Eat better',
     description: 'More protein, more balance, more energy',
+    icon: 'leaf',
   },
 ];
 

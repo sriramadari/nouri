@@ -53,14 +53,17 @@ export function AboutStep() {
         <Text variant="label" color="textSecondary">
           Sex
         </Text>
-        {SEX_OPTIONS.map((option) => (
-          <OptionCard
-            key={option.value}
-            title={option.label}
-            selected={sex === option.value}
-            onPress={() => update({ sex: option.value })}
-          />
-        ))}
+        <View style={styles.row}>
+          {SEX_OPTIONS.map((option) => (
+            <View key={option.value} style={styles.cell}>
+              <OptionCard
+                title={option.label}
+                selected={sex === option.value}
+                onPress={() => update({ sex: option.value })}
+              />
+            </View>
+          ))}
+        </View>
         <Text variant="caption" color={errors.sex ? 'danger' : 'textSecondary'}>
           {errors.sex ?? 'Used only to calculate how much energy your body needs.'}
         </Text>
@@ -71,4 +74,6 @@ export function AboutStep() {
 
 const styles = StyleSheet.create({
   group: { gap: spacing.sm },
+  row: { flexDirection: 'row', gap: spacing.md },
+  cell: { flex: 1 },
 });

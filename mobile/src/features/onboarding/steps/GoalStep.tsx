@@ -1,4 +1,4 @@
-import { OptionCard, Text } from '@/components/ui';
+import { Icon, OptionCard, Text } from '@/components/ui';
 
 import { StepLayout } from '../components/StepLayout';
 import { GOAL_OPTIONS } from '../options';
@@ -27,6 +27,12 @@ export function GoalStep() {
           description={option.description}
           selected={goal === option.value}
           onPress={() => update({ goal: option.value })}
+          leading={
+            <Icon
+              name={option.icon}
+              color={goal === option.value ? 'brandText' : 'textSecondary'}
+            />
+          }
         />
       ))}
       {errors.goal ? (

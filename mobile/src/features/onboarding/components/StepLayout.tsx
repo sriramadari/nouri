@@ -58,40 +58,42 @@ export function StepLayout({
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <View style={styles.header}>
-          {goBack ? (
-            <Pressable
-              onPress={goBack}
-              accessibilityRole="button"
-              accessibilityLabel="Back"
-              hitSlop={8}
-              style={styles.back}
-            >
-              <Icon name="chevronLeft" />
-            </Pressable>
-          ) : (
-            <View style={styles.back} />
-          )}
+          <Pressable
+            onPress={goBack}
+            accessibilityRole="button"
+            accessibilityLabel="Back"
+            hitSlop={8}
+            style={styles.back}
+          >
+            <Icon name="chevronLeft" />
+          </Pressable>
+          {/* One segment per question, so the person can see how short this is. */}
           <View
-            style={styles.progressTrack}
+            style={styles.segments}
             accessible
             accessibilityRole="progressbar"
             accessibilityLabel={
               counted ? `Step ${stepNumber} of ${COUNTED_STEPS}` : 'Optional step'
             }
           >
-            <View
-              style={[
-                styles.progressFill,
-                { width: `${(Math.min(stepNumber, COUNTED_STEPS) / COUNTED_STEPS) * 100}%` },
-              ]}
-            />
+            {Array.from({ length: COUNTED_STEPS }, (_, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.segment,
+                  index < stepNumber && styles.segmentDone,
+                  index === stepNumber - 1 && styles.segmentCurrent,
+                ]}
+              />
+            ))}
           </View>
-          <Text variant="caption" color="textSecondary" style={styles.counter}>
-            {counted ? `${stepNumber} of ${COUNTED_STEPS}` : 'Optional'}
-          </Text>
+          <View style={styles.back} />
         </View>
 
         <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
+          <Text variant="eyebrow" color="brandText">
+            {counted ? `Step ${stepNumber} of ${COUNTED_STEPS}` : 'Optional · last step'}
+          </Text>
           <Text variant="title" accessibilityRole="header">
             {title}
           </Text>
@@ -124,16 +126,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  progressTrack: {
-    flex: 1,
-    height: 6,
-    borderRadius: radii.pill,
-    backgroundColor: colors.ringTrack,
-    overflow: 'hidden',
-  },
-  progressFill: { height: '100%', borderRadius: radii.pill, backgroundColor: colors.brand },
-  counter: { minWidth: 56, textAlign: 'right', paddingRight: spacing.sm },
-  body: { padding: spacing.lg, gap: spacing.sm, flexGrow: 1 },
+  segments: { flex: 1, flexDirection: 'row', gap: spacing.xs },
+  segment: { flex: 1, height: 5, borderRadius: radii.pill, backgroundColor: colors.ringTrack },
+  segmentDone: { backgroundColor: colors.textPrimary },
+  segmentCurrent: { backgroundColor: colors.brand },
+  body: { padding: spacing.lg, paddingTop: spacing.xl, gap: spacing.sm, flexGrow: 1 },
   content: { marginTop: spacing.lg, gap: spacing.md },
   footer: { padding: spacing.lg, gap: spacing.sm },
 });

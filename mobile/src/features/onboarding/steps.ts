@@ -7,6 +7,7 @@ export const STEPS: OnboardingStep[] = ['name', 'about', 'body', 'activity', 'go
 export const COUNTED_STEPS = 5;
 
 export const stepHref = (step: OnboardingStep) => `/onboarding/${step}` as Href;
+const WELCOME_HREF = '/onboarding/welcome' as Href;
 
 export function useStepNavigation(step: OnboardingStep) {
   const router = useRouter();
@@ -17,10 +18,13 @@ export function useStepNavigation(step: OnboardingStep) {
   return {
     stepNumber: index + 1,
     goNext: next ? () => router.push(stepHref(next)) : undefined,
-    // After an app restart there is no history, so back falls back to the previous step.
-    goBack: previous
-      ? () => (router.canGoBack() ? router.back() : router.replace(stepHref(previous)))
-      : undefined,
+    // After an app restart there is no history, so back falls back to the previous step
+    // (or the welcome screen from the first question).
+    goBack: () => {
+      const fallback = previous ? stepHref(previous) : WELCOME_HREF;
+      if (router.canGoBack()) router.back();
+      else router.replace(fallback);
+    },
   };
 }
 
