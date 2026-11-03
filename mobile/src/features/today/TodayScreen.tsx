@@ -1,9 +1,8 @@
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { Button, Confetti, Screen, Text } from '@/components/ui';
-import { MealLogger } from '@/features/meals/components/MealLogger';
 import { TodayMealList } from '@/features/meals/components/TodayMealList';
 import { useTodayMeals } from '@/features/meals/use-today-meals';
 import { localDateKey } from '@/lib/dates';
@@ -25,10 +24,11 @@ import { WeeklyWins } from './components/WeeklyWins';
 const GREETINGS = { MORNING: 'Good morning', AFTERNOON: 'Good afternoon', EVENING: 'Good evening' };
 
 /**
- * Today: the assistant speaks first, the rings show what is left, one tap logs a meal, and a
- * real win gets a celebration.
+ * Today: the assistant speaks first, the rings show what is left, and a real win gets a
+ * celebration. Logging lives one tap away on the centre tab button.
  */
 export function TodayScreen() {
+  const router = useRouter();
   const profile = useProfileStore((state) => state.profile);
   const targets = useProfileStore((state) => state.targets);
   const flaggedMarkers = useProfileStore((state) => state.flaggedMarkers);
@@ -95,13 +95,13 @@ export function TodayScreen() {
 
         <AssistantCard {...assistant} slot={slot} />
         <DayRings eaten={today.totals} targets={targets} />
-        <MealLogger />
 
         <TodayMealList
           meals={today.meals}
           isLoading={today.isLoading}
           error={today.error}
           onRetry={() => today.refetch()}
+          onLogFirst={() => router.navigate('/log')}
         />
         <WeeklyWins targets={targets} />
         <FocusSummary areas={focusAreas} />

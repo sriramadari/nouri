@@ -1,20 +1,12 @@
 import { useRef, useState } from 'react';
 import { Linking, Pressable, StyleSheet, View } from 'react-native';
 
-import {
-  AdaptiveSheet,
-  Button,
-  ErrorState,
-  Icon,
-  type IconName,
-  Text,
-  useToast,
-} from '@/components/ui';
+import { AdaptiveSheet, Button, ErrorState, Icon, Text, useToast } from '@/components/ui';
 import { ApiError, toApiError } from '@/lib/api/api-error';
 import { api } from '@/lib/api/endpoints';
 import { buildUploadForm, type PickedFile } from '@/lib/api/upload';
 import { haptics } from '@/lib/haptics';
-import { colors, MIN_TAP_TARGET, radii, spacing } from '@/theme';
+import { colors, radii, spacing } from '@/theme';
 
 import { capturePhoto } from '@/lib/media/capture-photo';
 import {
@@ -59,7 +51,7 @@ const VOICE_PROBLEMS: Record<Exclude<VoiceResult['status'], 'recorded'>, string>
  * The hero flow: Snap or Speak, the AI drafts the meal, the person checks it, Save. Every
  * failure has a way forward (retry, retake, add by hand), and saving works offline.
  */
-export function MealLogger() {
+export function MealLogger({ onSaved }: { onSaved?: () => void }) {
   const [flow, setFlow] = useState<Flow>({ step: 'closed' });
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -137,6 +129,7 @@ export function MealLogger() {
         where === 'saved' ? 'success' : 'offline',
       );
       setFlow({ step: 'closed' });
+      onSaved?.();
     } catch (error) {
       setSaveError(toApiError(error).message);
     } finally {
@@ -145,33 +138,52 @@ export function MealLogger() {
   };
 
   return (
-    <View style={styles.dock}>
-      <View>
-        <Text variant="heading" color="textOnPrimary">
-          What did you eat?
-        </Text>
-        <Text variant="caption" color="textOnPrimaryMuted">
-          Snap the plate or say it. Katori does the counting.
-        </Text>
+    <View style={styles.capture}>
+      {/* Snap is the hero: a photo gives the most accurate estimate for the least effort. */}
+      <View style={styles.halo}>
+        <Pressable
+          onPress={() => snap('camera')}
+          accessibilityRole="button"
+          accessibilityLabel="Snap"
+          accessibilityHint="Opens the camera to photograph your meal"
+          style={({ pressed }) => [styles.snap, pressed && styles.snapPressed]}
+        >
+          <Icon name="camera" size={44} strokeWidth={1.8} />
+          <Text variant="heading">Snap</Text>
+        </Pressable>
       </View>
-      <View style={styles.primary}>
-        <View style={styles.action}>
+      <Text variant="caption" color="textSecondary" align="center">
+        A photo of your plate, from above
+      </Text>
+
+      <View style={styles.or}>
+        <View style={styles.rule} />
+        <Text variant="eyebrow" color="textMuted">
+          or
+        </Text>
+        <View style={styles.rule} />
+      </View>
+
+      <Button label="Speak" icon="mic" onPress={speak} fullWidth />
+      <View style={styles.extras}>
+        <View style={styles.extra}>
           <Button
-            label="Snap"
-            icon="camera"
-            variant="brand"
-            onPress={() => snap('camera')}
+            label="From gallery"
+            icon="image"
+            variant="secondary"
+            onPress={() => snap('library')}
             fullWidth
           />
         </View>
-        <View style={styles.action}>
-          <Button label="Speak" icon="mic" variant="secondary" onPress={speak} fullWidth />
+        <View style={styles.extra}>
+          <Button
+            label="Type it in"
+            icon="edit"
+            variant="secondary"
+            onPress={addByHand}
+            fullWidth
+          />
         </View>
-      </View>
-      <View style={styles.secondary}>
-        <QuickAction icon="image" label="From gallery" onPress={() => snap('library')} />
-        <View style={styles.divider} />
-        <QuickAction icon="edit" label="Type it in" onPress={addByHand} />
       </View>
 
       <AdaptiveSheet
@@ -307,54 +319,31 @@ function FailedPanel({
   );
 }
 
-/** A quiet text action on the dark dock, for the less common ways to log. */
-function QuickAction({
-  icon,
-  label,
-  onPress,
-}: {
-  icon: IconName;
-  label: string;
-  onPress: () => void;
-}) {
-  return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityLabel={label}
-      style={({ pressed }) => [styles.quick, pressed && styles.pressed]}
-    >
-      <Icon name={icon} size={18} color="textOnPrimaryMuted" />
-      <Text variant="label" color="textOnPrimary">
-        {label}
-      </Text>
-    </Pressable>
-  );
-}
+const SNAP_SIZE = 168;
 
 const styles = StyleSheet.create({
-  dock: {
-    gap: spacing.md,
-    padding: spacing.lg,
-    borderRadius: radii.lg,
-    backgroundColor: colors.primary,
+  capture: { alignItems: 'center', gap: spacing.md },
+  halo: {
+    width: SNAP_SIZE + 28,
+    height: SNAP_SIZE + 28,
+    borderRadius: radii.pill,
+    backgroundColor: colors.brandTint,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  primary: { flexDirection: 'row', gap: spacing.md },
-  action: { flex: 1 },
-  secondary: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
-  quick: {
-    flex: 1,
-    flexDirection: 'row',
+  snap: {
+    width: SNAP_SIZE,
+    height: SNAP_SIZE,
+    borderRadius: radii.pill,
+    backgroundColor: colors.brand,
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.xs,
-    minHeight: MIN_TAP_TARGET,
   },
-  divider: {
-    width: StyleSheet.hairlineWidth,
-    height: 20,
-    backgroundColor: colors.textOnPrimaryMuted,
-  },
-  pressed: { opacity: 0.6 },
+  snapPressed: { backgroundColor: colors.brandText, transform: [{ scale: 0.97 }] },
+  or: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, alignSelf: 'stretch' },
+  rule: { flex: 1, height: StyleSheet.hairlineWidth, backgroundColor: colors.border },
+  extras: { flexDirection: 'row', gap: spacing.md, alignSelf: 'stretch' },
+  extra: { flex: 1 },
   panel: { gap: spacing.md },
 });

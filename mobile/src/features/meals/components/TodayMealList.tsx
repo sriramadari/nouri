@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
-import { Card, ErrorState, Icon, type IconName, Skeleton, Text } from '@/components/ui';
+import { Button, Card, ErrorState, Icon, type IconName, Skeleton, Text } from '@/components/ui';
 import type { MealSource } from '@/lib/api/types';
 import { formatTime } from '@/lib/dates';
 import { colors, radii, spacing } from '@/theme';
@@ -19,10 +19,18 @@ interface TodayMealListProps {
   isLoading: boolean;
   error: ApiError | null;
   onRetry: () => void;
+  /** Opens logging from the day one empty state. */
+  onLogFirst: () => void;
 }
 
 /** Today's meals in order, including ones still waiting to sync. */
-export function TodayMealList({ meals, isLoading, error, onRetry }: TodayMealListProps) {
+export function TodayMealList({
+  meals,
+  isLoading,
+  error,
+  onRetry,
+  onLogFirst,
+}: TodayMealListProps) {
   return (
     <View style={styles.section}>
       <Text variant="heading" accessibilityRole="header">
@@ -49,10 +57,11 @@ export function TodayMealList({ meals, isLoading, error, onRetry }: TodayMealLis
       ) : null}
 
       {!isLoading && !error && meals.length === 0 ? (
-        <Card>
+        <Card style={styles.empty}>
           <Text color="textSecondary">
             Nothing logged yet. Your first snap takes about 5 seconds.
           </Text>
+          <Button label="Log your first meal" icon="camera" onPress={onLogFirst} />
         </Card>
       ) : null}
 
@@ -83,6 +92,7 @@ export function TodayMealList({ meals, isLoading, error, onRetry }: TodayMealLis
 }
 
 const styles = StyleSheet.create({
+  empty: { alignItems: 'flex-start', gap: spacing.md },
   section: { gap: spacing.md },
   row: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   icon: {
