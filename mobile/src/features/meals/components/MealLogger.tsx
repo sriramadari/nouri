@@ -8,7 +8,7 @@ import { buildUploadForm, type PickedFile } from '@/lib/api/upload';
 import { haptics } from '@/lib/haptics';
 import { spacing } from '@/theme';
 
-import { capturePhoto } from '../capture-photo';
+import { capturePhoto } from '@/lib/media/capture-photo';
 import {
   type EditableMeal,
   emptyManualMeal,
@@ -83,7 +83,7 @@ export function MealLogger() {
   };
 
   const snap = async (from: 'camera' | 'library') => {
-    const result = await capturePhoto(from);
+    const result = await capturePhoto(from, 'meal.jpg');
     if (result.status === 'denied') setFlow({ step: 'denied', what: 'camera' });
     if (result.status === 'picked') await analyze('PHOTO', result.file);
   };
