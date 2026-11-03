@@ -21,10 +21,15 @@ services:
         value: gemini
       - key: GEMINI_MODELS
         value: gemini-3.5-flash,gemini-3.8-flash,gemini-3.5-flash-lite
+      # Voice notes go to open models on Groq (Whisper, then GPT-OSS); needs GROQ_API_KEY.
+      - key: AI_VOICE_PROVIDER
+        value: groq
       # Neon production branch: pooled URL for the app, direct URL for migrations.
       - key: DATABASE_URL
         sync: false
       - key: DIRECT_URL
         sync: false
       - key: GEMINI_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
         sync: false

@@ -158,9 +158,14 @@ idempotency keys; an indexed `(userId, eatenAt)` for day queries; AI provider sw
 
 ## AI choices and fallbacks
 
-- **Provider:** Google Gemini (Flash family) through `@google/genai`: one model reads images,
-  audio and PDFs and returns JSON matching a schema. Behind an `AiProvider` interface, so another
-  provider is one new class and one env change. `MockProvider` serves tests and offline demos.
+- **Providers:** Google Gemini (Flash family) through `@google/genai` reads photos and PDFs and
+  returns JSON matching a schema. Voice notes go to open models on **Groq**'s free tier: OpenAI's
+  Whisper (`whisper-large-v3-turbo`) transcribes, then an open text model (`openai/gpt-oss-120b`)
+  turns the words into foods. Groq's free tier allows about 2,000 transcriptions a day, far more
+  than Gemini's free quota, and answers in 2 to 3 seconds instead of 20 or more when Gemini is
+  busy. Everything sits behind one `AiProvider` interface: `RoutingAiProvider` sends voice to
+  `GroqVoiceProvider` and the rest to `GeminiProvider`, chosen by `AI_VOICE_PROVIDER`, so services
+  never change. `MockProvider` serves tests and offline demos.
 - **Contracts:** every answer is validated with Zod. A malformed answer gets one retry, then a
   clear error. Gemini is sent a shape only schema (some models reject `minLength`); Zod still
   enforces every limit.
@@ -168,12 +173,13 @@ idempotency keys; an indexed `(userId, eatenAt)` for day queries; AI provider sw
   (`GEMINI_MODELS`) that moves on when a model is overloaded (503), out of quota (429), retired
   (404) or slow. Each model gets an even share of the time left and the last gets all of it, so
   the server always answers before the app stops waiting; a 400 is not retried.
-- **Voice listens before it estimates, in one call.** Asked loosely to "listen and estimate", a
-  model can invent a meal from silence. The voice answer is ordered: speech detected, then the
-  exact transcript, then foods named in that transcript; the server drops any foods when nothing
-  was heard. (An earlier version used two calls, listen then estimate, which doubled the wait
-  when Gemini was busy.) The app shows "Heard: …" so mishearings are caught before saving, and
-  phones check for silence before uploading.
+- **Voice never invents a meal from silence.** With Groq, Whisper only transcribes, and its
+  per segment "no speech" score decides whether anyone spoke (Whisper is known to "hear" phrases
+  like "Thank you." in silence); the text model then sees only the transcript, never the audio.
+  With Gemini, the voice answer is ordered: speech detected, then the exact transcript, then foods
+  named in it, in one call. Either way the server drops any foods when nothing was heard, the app
+  shows "Heard: …" so mishearings are caught before saving, and phones check for silence before
+  uploading.
 - **Reports:** the model only copies what is printed. Code matches names (aliases like
   "Glucose - Fasting", "FBS"), converts units (mmol/L, mmol/mol, nmol/L, g/L), decides status
   (lab range first, sex aware defaults otherwise) and attaches reviewed guidance.
@@ -200,7 +206,7 @@ Requirements: Node 22+, npm, and for the app either Expo Go on a phone or a brow
 ```bash
 # API
 cd server
-cp .env.example .env        # fill in DATABASE_URL, DIRECT_URL and GEMINI_API_KEY
+cp .env.example .env        # fill in DATABASE_URL, DIRECT_URL, GEMINI_API_KEY, GROQ_API_KEY
 npm install
 npx prisma migrate deploy
 npm run start:dev           # http://localhost:3000/health
@@ -223,7 +229,9 @@ In development the app finds the API automatically on port 3000 of the computer 
 | `DIRECT_URL`          | server | Neon direct connection, used by migrations      |
 | `GEMINI_API_KEY`      | server | Gemini key (not needed with `AI_PROVIDER=mock`) |
 | `GEMINI_MODELS`       | server | Model chain, tried in order                     |
-| `AI_TIMEOUT_MS`       | server | Per call AI timeout (default 20000)             |
+| `AI_TIMEOUT_MS`       | server | Total time per AI task (default 60000)          |
+| `AI_VOICE_PROVIDER`   | server | `groq` (open models on Groq) or `gemini`        |
+| `GROQ_API_KEY`        | server | Groq key, needed when voice uses `groq`         |
 | `EXPO_PUBLIC_API_URL` | mobile | API base URL; required for release builds       |
 
 ## Testing

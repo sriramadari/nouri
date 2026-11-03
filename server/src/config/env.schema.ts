@@ -27,14 +27,29 @@ export const envSchema = z
           .filter(Boolean),
       )
       .pipe(z.array(z.string()).min(1, 'List at least one Gemini model.')),
-    /** Per call limit. Successful answers take 4 to 8 seconds; a hung model should not hold users for long. */
-    // Total time for one AI task across the model chain; the app waits 75 s for a meal.
+    /** Total time for one AI task across the model chain; the app waits 75 s for a meal. */
     AI_TIMEOUT_MS: z.coerce.number().int().min(1000).max(120_000).default(60_000),
+    /**
+     * Who reads voice notes. "groq" uses open models (Whisper, then an open text model) on
+     * Groq's free tier, which has far higher limits than Gemini's for this; "gemini" keeps
+     * voice on the main provider. Ignored when AI_PROVIDER is "mock".
+     */
+    AI_VOICE_PROVIDER: z.enum(['gemini', 'groq']).default('gemini'),
+    GROQ_API_KEY: z.string().min(1).optional(),
+    GROQ_SPEECH_MODEL: z.string().min(1).default('whisper-large-v3-turbo'),
+    GROQ_TEXT_MODEL: z.string().min(1).default('openai/gpt-oss-120b'),
   })
   .refine((env) => env.AI_PROVIDER !== 'gemini' || env.GEMINI_API_KEY, {
     message: 'GEMINI_API_KEY is required when AI_PROVIDER is "gemini"',
     path: ['GEMINI_API_KEY'],
-  });
+  })
+  .refine(
+    (env) => env.AI_PROVIDER === 'mock' || env.AI_VOICE_PROVIDER !== 'groq' || env.GROQ_API_KEY,
+    {
+      message: 'GROQ_API_KEY is required when AI_VOICE_PROVIDER is "groq"',
+      path: ['GROQ_API_KEY'],
+    },
+  );
 
 export type Env = z.infer<typeof envSchema>;
 
