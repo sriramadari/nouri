@@ -1,0 +1,29 @@
+# Render Blueprint for the Nouri API. Secrets are entered in the Render dashboard
+# (sync: false) and never committed. Singapore matches the Neon database region.
+services:
+  - type: web
+    name: nouri-api
+    runtime: node
+    rootDir: server
+    region: singapore
+    plan: free
+    # Dev dependencies are needed to build (Nest CLI, Prisma CLI) even with NODE_ENV=production.
+    buildCommand: npm ci --include=dev && npm run build && npx prisma migrate deploy
+    startCommand: npm run start:prod
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: '22'
+      - key: NODE_ENV
+        value: production
+      - key: AI_PROVIDER
+        value: gemini
+      - key: GEMINI_MODELS
+        value: gemini-3.5-flash,gemini-3.8-flash,gemini-3.5-flash-lite
+      # Neon production branch: pooled URL for the app, direct URL for migrations.
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
