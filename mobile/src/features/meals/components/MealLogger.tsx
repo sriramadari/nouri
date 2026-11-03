@@ -1,12 +1,20 @@
 import { useRef, useState } from 'react';
-import { Linking, StyleSheet, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, View } from 'react-native';
 
-import { AdaptiveSheet, Button, ErrorState, useToast } from '@/components/ui';
+import {
+  AdaptiveSheet,
+  Button,
+  ErrorState,
+  Icon,
+  type IconName,
+  Text,
+  useToast,
+} from '@/components/ui';
 import { ApiError, toApiError } from '@/lib/api/api-error';
 import { api } from '@/lib/api/endpoints';
 import { buildUploadForm, type PickedFile } from '@/lib/api/upload';
 import { haptics } from '@/lib/haptics';
-import { spacing } from '@/theme';
+import { colors, MIN_TAP_TARGET, radii, spacing } from '@/theme';
 
 import { capturePhoto } from '@/lib/media/capture-photo';
 import {
@@ -137,23 +145,33 @@ export function MealLogger() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.dock}>
+      <View>
+        <Text variant="heading" color="textOnPrimary">
+          What did you eat?
+        </Text>
+        <Text variant="caption" color="textOnPrimaryMuted">
+          Snap the plate or say it. Katori does the counting.
+        </Text>
+      </View>
       <View style={styles.primary}>
         <View style={styles.action}>
-          <Button label="Snap" icon="camera" onPress={() => snap('camera')} fullWidth />
+          <Button
+            label="Snap"
+            icon="camera"
+            variant="brand"
+            onPress={() => snap('camera')}
+            fullWidth
+          />
         </View>
         <View style={styles.action}>
           <Button label="Speak" icon="mic" variant="secondary" onPress={speak} fullWidth />
         </View>
       </View>
       <View style={styles.secondary}>
-        <Button
-          label="Choose a photo"
-          icon="image"
-          variant="ghost"
-          onPress={() => snap('library')}
-        />
-        <Button label="Add by hand" icon="edit" variant="ghost" onPress={addByHand} />
+        <QuickAction icon="image" label="From gallery" onPress={() => snap('library')} />
+        <View style={styles.divider} />
+        <QuickAction icon="edit" label="Type it in" onPress={addByHand} />
       </View>
 
       <AdaptiveSheet
@@ -289,10 +307,54 @@ function FailedPanel({
   );
 }
 
+/** A quiet text action on the dark dock, for the less common ways to log. */
+function QuickAction({
+  icon,
+  label,
+  onPress,
+}: {
+  icon: IconName;
+  label: string;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      style={({ pressed }) => [styles.quick, pressed && styles.pressed]}
+    >
+      <Icon name={icon} size={18} color="textOnPrimaryMuted" />
+      <Text variant="label" color="textOnPrimary">
+        {label}
+      </Text>
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
-  container: { gap: spacing.xs },
+  dock: {
+    gap: spacing.md,
+    padding: spacing.lg,
+    borderRadius: radii.lg,
+    backgroundColor: colors.primary,
+  },
   primary: { flexDirection: 'row', gap: spacing.md },
   action: { flex: 1 },
-  secondary: { flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap' },
+  secondary: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
+  quick: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xs,
+    minHeight: MIN_TAP_TARGET,
+  },
+  divider: {
+    width: StyleSheet.hairlineWidth,
+    height: 20,
+    backgroundColor: colors.textOnPrimaryMuted,
+  },
+  pressed: { opacity: 0.6 },
   panel: { gap: spacing.md },
 });

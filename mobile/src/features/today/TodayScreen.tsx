@@ -2,7 +2,7 @@ import { Link } from 'expo-router';
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { Button, Card, Confetti, Screen, Text } from '@/components/ui';
+import { Button, Confetti, Screen, Text } from '@/components/ui';
 import { MealLogger } from '@/features/meals/components/MealLogger';
 import { TodayMealList } from '@/features/meals/components/TodayMealList';
 import { useTodayMeals } from '@/features/meals/use-today-meals';
@@ -50,7 +50,8 @@ export function TodayScreen() {
     isFirstDay: onboardedAt !== null && localDateKey(new Date(onboardedAt)) === dateKey,
   });
 
-  // Celebrate once per goal day: confetti, a happy buzz and a card that stays.
+  // Celebrate once per goal day: confetti and a happy buzz. The assistant card switches to
+  // praise for the rest of the day, so the win stays visible without a second card.
   const goalHit = targets ? isDailyGoalHit(today.totals, targets) : false;
   const celebratedOn = useCelebration((state) => state.celebratedOn);
   const playing = useCelebration((state) => state.playing);
@@ -77,24 +78,24 @@ export function TodayScreen() {
     <View style={styles.root}>
       <Screen>
         <View style={styles.header}>
-          <Text variant="title" accessibilityRole="header">
-            {GREETINGS[slot]}, {profile.name}
-          </Text>
+          <View style={styles.headerText}>
+            <Text variant="eyebrow" color="brandText">
+              {new Date().toLocaleDateString('en-IN', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'short',
+              })}
+            </Text>
+            <Text variant="title" accessibilityRole="header">
+              {GREETINGS[slot]}, {profile.name}
+            </Text>
+          </View>
           {streak ? <StreakBadge streak={streak} /> : null}
         </View>
 
-        <AssistantCard {...assistant} />
+        <AssistantCard {...assistant} slot={slot} />
         <DayRings eaten={today.totals} targets={targets} />
         <MealLogger />
-
-        {goalHit ? (
-          <Card tone="leafTint">
-            <Text variant="heading">Goal hit today</Text>
-            <Text color="textSecondary">
-              {targets.proteinG} g protein reached within your calories. That’s how habits stick.
-            </Text>
-          </Card>
-        ) : null}
 
         <TodayMealList
           meals={today.meals}
@@ -118,5 +119,6 @@ export function TodayScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  header: { gap: spacing.sm },
+  header: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.md, flexWrap: 'wrap' },
+  headerText: { flex: 1, minWidth: 200, gap: spacing.xxs },
 });
