@@ -31,6 +31,7 @@ try {
   await sleep(1200);
   await page.screenshot(`${S}/small-today.png`);
   step(`Today at 320 px: horizontal overflow ${await overflow()} px`);
+  await page.click('Log a meal'); // the centre tab button
   await page.click('Type it in');
   await page.waitForText('Check your meal');
   await page.type('Food', 'Idli sambar');

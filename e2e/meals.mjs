@@ -53,6 +53,7 @@ try {
     // --- Photo ---
     chooserFile = process.env.MEAL_PHOTO;
     t = Date.now();
+    await page.click('Log a meal'); // the centre tab button
     await page.click('From gallery');
     await page.waitForText('Katori is looking at your plate', 15000);
     step('analyzing state with skeleton chips');
@@ -92,6 +93,7 @@ try {
 
   if (!process.env.SKIP_VOICE && process.env.VOICE_WAV) {
     // --- Voice (Chrome plays the WAV file as the microphone) ---
+    await page.click('Log a meal'); // the centre tab button
     await page.click('Speak');
     await page.waitForText('Listening…');
     step('recording sheet with timer');
@@ -115,6 +117,7 @@ try {
     downloadThroughput: -1,
     uploadThroughput: -1,
   });
+  await page.click('Log a meal'); // the centre tab button
   await page.click('Type it in');
   await page.type('Food', 'Masala chai');
   await page.type('Calories', '90');
@@ -137,6 +140,7 @@ try {
   step('back online: the queued meal synced automatically');
 
   // --- Double tap on Save ---
+  await page.click('Log a meal'); // the centre tab button
   await page.click('Type it in');
   await page.type('Food', 'Banana');
   await page.type('Calories', '105');

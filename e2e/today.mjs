@@ -15,6 +15,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const assistantSays = (text) =>
   text.match(/Katori\n(?:Morning check in|Afternoon nudge|Evening recap|Well done)\n([^\n]+)/)[1];
 const addByHand = async (food, kcal, protein) => {
+  await page.click('Log a meal'); // the centre tab button
   await page.click('Type it in');
   await page.type('Food', food);
   await page.type('Calories', String(kcal));
@@ -28,7 +29,7 @@ try {
   await page.goto(BASE + '/');
   await onboard(page, 'Kiran');
   await page.waitForText('Start a streak');
-  await page.waitForText('What did you eat?');
+  await page.waitForText('Today’s meals');
   const day1 = await page.text();
   step(`assistant card on day one: "${assistantSays(day1)}"`);
   if (!day1.includes('Start a streak')) throw new Error('Expected an unlit streak badge');
