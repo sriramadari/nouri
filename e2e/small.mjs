@@ -43,6 +43,7 @@ try {
   step(`meal sheet at 320 px: overflow ${await overflow()} px`);
   await page.click('Save meal · 320 kcal');
   await page.waitForText('Meal saved');
+  await sleep(800); // let the sheet finish sliding away
   await page.click('Health');
   await page.waitForText('Your lab results, explained');
   await page.screenshot(`${S}/small-health.png`);

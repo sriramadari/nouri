@@ -107,6 +107,7 @@ try {
     const voiceKcal = (await page.text()).match(/Save meal · (\d+) kcal/)[1];
     await page.click(`Save meal · ${voiceKcal} kcal`);
     await page.waitForText('Meal saved');
+    await sleep(800); // let the sheet finish sliding away, as after the other saves
   }
 
   // --- Offline: add by hand, sync later ---
