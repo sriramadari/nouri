@@ -1,5 +1,6 @@
 import * as Notifications from 'expo-notifications';
 import { AndroidImportance } from 'expo-notifications';
+import { type Href, useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { Platform } from 'react-native';
 
@@ -9,6 +10,8 @@ import { learnReminderTimes, type MealSlot, slotOfTime } from './reminder-times'
 
 const DAYS_AHEAD = 3;
 const CHANNEL_ID = 'meal-reminders';
+/** Where a tapped reminder lands: straight on the log screen, ready to snap. */
+const LOG_HREF: Href = '/log';
 
 const MESSAGES: Record<MealSlot, { title: string; body: string }> = {
   breakfast: { title: 'Breakfast time?', body: 'Snap it and Katori does the rest.' },
@@ -82,6 +85,26 @@ export async function scheduleMealReminders(
  */
 export function useMealReminders(): void {
   const eatenAt = useMealTimes((state) => state.eatenAt);
+  const router = useRouter();
+
+  // Tapping a reminder opens logging directly, whether the app was running or not.
+  useEffect(() => {
+    if (!supported) return;
+    let handled: string | null = null;
+    const open = (response: Notifications.NotificationResponse | null) => {
+      const id = response?.notification.request.identifier ?? null;
+      if (!id || id === handled) return;
+      handled = id;
+      // Forget it once handled, so the next app open does not jump to logging again.
+      Notifications.clearLastNotificationResponse();
+      router.navigate(LOG_HREF);
+    };
+    Notifications.getLastNotificationResponseAsync()
+      .then(open)
+      .catch(() => undefined);
+    const subscription = Notifications.addNotificationResponseReceivedListener(open);
+    return () => subscription.remove();
+  }, [router]);
 
   useEffect(() => {
     if (!supported || eatenAt.length === 0) return;
