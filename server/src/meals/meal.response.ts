@@ -15,7 +15,7 @@ export interface MealDraft {
   totals: Nutrition;
   confidence: number | null;
   needsReview: boolean;
-  /** For voice notes: what Nouri heard, shown so the user can spot a mishearing. */
+  /** For voice notes: what Katori heard, shown so the user can spot a mishearing. */
   transcript?: string;
 }
 

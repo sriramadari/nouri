@@ -101,7 +101,7 @@ function BiomarkerDetail({ marker }: { marker: Biomarker }) {
 
       {marker.key === null ? (
         <Text variant="caption" color="textMuted">
-          Nouri compared this result with the range printed by your lab.
+          Katori compared this result with the range printed by your lab.
         </Text>
       ) : null}
       <Text variant="caption" color="textMuted">

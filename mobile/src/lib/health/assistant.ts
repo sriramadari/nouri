@@ -11,7 +11,7 @@ export interface AssistantInput {
   targets: Targets;
   mealsLogged: number;
   flaggedMarkers: FlaggedMarker[];
-  /** First day using Nouri: welcome instead of judging an empty day. */
+  /** First day using Katori: welcome instead of judging an empty day. */
   isFirstDay: boolean;
 }
 
@@ -63,7 +63,7 @@ export function pickAssistantMessage(input: AssistantInput): AssistantMessage {
     return {
       tone: 'welcome',
       message: `Welcome, ${name}. Snap your first meal`,
-      why: 'Nouri learns your day from what you log, and one photo is all it takes.',
+      why: 'Katori learns your day from what you log, and one photo is all it takes.',
     };
   }
 
@@ -132,7 +132,7 @@ export function pickAssistantMessage(input: AssistantInput): AssistantMessage {
     return {
       tone: 'nudge',
       message: 'Log today’s meals before bed',
-      why: 'Even a rough log keeps your streak going and helps Nouri learn your day.',
+      why: 'Even a rough log keeps your streak going and helps Katori learn your day.',
     };
   }
   if (calorieShare > 1.1) {

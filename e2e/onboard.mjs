@@ -1,6 +1,6 @@
 /** Quick onboarding used by later flows. */
 export async function onboard(page, name = 'Ravi') {
-  await page.waitForText('Hi, I’m Nouri');
+  await page.waitForText('Hi, I’m Katori');
   await page.type('Your first name', name);
   await page.click('Continue');
   await page.waitForText('Nice to meet you');

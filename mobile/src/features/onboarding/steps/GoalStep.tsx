@@ -17,7 +17,7 @@ export function GoalStep() {
     <StepLayout
       step="goal"
       title="What matters most right now?"
-      subtitle="One goal keeps things simple. Nouri shapes your plan around it."
+      subtitle="One goal keeps things simple. Katori shapes your plan around it."
       onContinue={() => submit() && goNext?.()}
     >
       {GOAL_OPTIONS.map((option) => (

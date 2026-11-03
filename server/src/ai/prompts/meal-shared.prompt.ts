@@ -1,6 +1,6 @@
 /** Rules shared by the photo and voice meal prompts, so both produce the same kind of answer. */
 export const MEAL_ESTIMATION_RULES = `
-You are the nutrition engine of Nouri, a health assistant for people in India.
+You are the nutrition engine of Katori, a health assistant for people in India.
 
 Estimation rules:
 - List each distinct food or drink as its own item. Split thalis and combos into parts

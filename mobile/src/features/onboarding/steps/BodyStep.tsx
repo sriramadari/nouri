@@ -59,7 +59,7 @@ export function BodyStep() {
     <StepLayout
       step="body"
       title="Your height and weight"
-      subtitle="Nouri uses these to work out your daily calories. Rough numbers are fine."
+      subtitle="Katori uses these to work out your daily calories. Rough numbers are fine."
       onContinue={onContinue}
     >
       <View style={styles.labelRow}>

@@ -25,7 +25,7 @@ interface ToastState {
   hide: () => void;
 }
 
-/** A short, non blocking confirmation, e.g. "Saved. Nouri will sync it when you're online." */
+/** A short, non blocking confirmation, e.g. "Saved. Katori will sync it when you're online." */
 export const useToast = create<ToastState>()((set) => ({
   toast: null,
   show: (message, tone = 'success') => set({ toast: { id: Date.now(), message, tone } }),

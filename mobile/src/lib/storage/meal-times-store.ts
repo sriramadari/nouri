@@ -17,6 +17,6 @@ export const useMealTimes = create<MealTimesState>()(
       eatenAt: [],
       record: (iso) => set((state) => ({ eatenAt: [...state.eatenAt, iso].slice(-KEEP_LAST) })),
     }),
-    { name: 'nouri.mealTimes', storage: persistStorage },
+    { name: 'katori.mealTimes', storage: persistStorage },
   ),
 );

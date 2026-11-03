@@ -65,7 +65,7 @@ async function send<T>({
     });
   } catch {
     throw controller.signal.aborted
-      ? new ApiError(0, 'TIMEOUT', 'Nouri is taking too long to respond. Please try again.')
+      ? new ApiError(0, 'TIMEOUT', 'Katori is taking too long to respond. Please try again.')
       : new ApiError(0, 'NETWORK_ERROR', "You're offline or the server can't be reached.");
   } finally {
     clearTimeout(timer);

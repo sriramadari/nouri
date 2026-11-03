@@ -79,7 +79,7 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
   return (
     <SafeAreaView style={styles.errorScreen}>
       <ErrorState
-        title="Nouri hit a snag"
+        title="Katori hit a snag"
         message="Something unexpected happened on this screen. Your data is safe."
         onRetry={retry}
       />

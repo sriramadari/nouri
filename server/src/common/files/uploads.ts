@@ -39,7 +39,7 @@ export function requireUpload(
   if (!allowedTypes.includes(mimeType)) {
     throw new AppError(
       'UNSUPPORTED_FILE_TYPE',
-      `Nouri can't read ${file.mimetype} files as a ${label}.`,
+      `Katori can't read ${file.mimetype} files as a ${label}.`,
       {
         allowed: allowedTypes,
       },

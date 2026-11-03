@@ -1,5 +1,5 @@
 /**
- * Response shapes of the Nouri API, mirrored from server/src. Kept by hand because the app and
+ * Response shapes of the Katori API, mirrored from server/src. Kept by hand because the app and
  * server ship separately; a shared package would be the next step if the API grows.
  */
 
@@ -39,7 +39,7 @@ export type BiomarkerStatus = 'LOW' | 'NORMAL' | 'HIGH';
 
 export interface Biomarker {
   id: string;
-  /** Stable id for markers Nouri understands, e.g. "LDL"; null for others. */
+  /** Stable id for markers Katori understands, e.g. "LDL"; null for others. */
   key: string | null;
   name: string;
   value: number;
@@ -84,7 +84,7 @@ export interface MealDraft {
   totals: Nutrition;
   confidence: number | null;
   needsReview: boolean;
-  /** For voice notes: what Nouri heard. */
+  /** For voice notes: what Katori heard. */
   transcript?: string;
 }
 

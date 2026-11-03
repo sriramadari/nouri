@@ -52,7 +52,7 @@ export function PlanScreen() {
       </View>
 
       <Card>
-        <Text variant="heading">How Nouri worked this out</Text>
+        <Text variant="heading">How Katori worked this out</Text>
         <Text color="textSecondary">
           Your body uses about {formatNumber(breakdown.bmr)} kcal at rest and about{' '}
           {formatNumber(breakdown.maintenanceCalories)} kcal on a typical day (
@@ -96,7 +96,7 @@ export function PlanScreen() {
 function caloriesReason(deficit: number, calories: number, losingWeight: boolean): string {
   if (!losingWeight) return 'Your target matches that, so your energy stays steady.';
   if (deficit >= 500) return `Eating ${deficit} kcal less than that loses about 0.5 kg a week.`;
-  return `Nouri keeps you at a safe minimum of ${formatNumber(calories)} kcal, so you still lose steadily.`;
+  return `Katori keeps you at a safe minimum of ${formatNumber(calories)} kcal, so you still lose steadily.`;
 }
 
 function TargetCard({ value, unit, label }: { value: string; unit: string; label: string }) {

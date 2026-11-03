@@ -1,9 +1,9 @@
-# Nouri
+# Katori
 
-**Eat smart, feel better.**
+**Eat well, know why.**
 
-Nouri is a personal health assistant for busy people in India who want to lose weight or fix a
-lab value (sugar, cholesterol, vitamin D). You snap or speak a meal once; Nouri logs it, does
+Katori is a personal health assistant for busy people in India who want to lose weight or fix a
+lab value (sugar, cholesterol, vitamin D). You snap or speak a meal once; Katori logs it, does
 the maths, explains why it matters for _your_ goal and lab results, and reaches out first.
 
 <p>
@@ -20,8 +20,8 @@ a blood report. They have tried calorie apps and quit.
 **Why they quit:** logging is tedious (search, scroll, guess grams for "dal") and the numbers mean
 nothing ("1,640 kcal... so what?"). Generic apps also don't know a katori from a cup.
 
-**Nouri's answer, the personal assistant test:** like a celebrity's assistant, the app does the
-heavy lifting. The user only snaps, speaks or taps once. Nouri logs, calculates, explains with a
+**Katori's answer, the personal assistant test:** like a celebrity's assistant, the app does the
+heavy lifting. The user only snaps, speaks or taps once. Katori logs, calculates, explains with a
 clear _why_, and nudges at the right moment.
 
 ## The four flows
@@ -50,7 +50,7 @@ On tablets and desktop web the same sheets become centred dialogs:
   friction before any value and are not core to the problem.
 - **Fitness tracker integrations.** Large scope (several SDKs, permissions, sync) for little gain
   towards eating better.
-- **Chat as the main screen.** Chat is hard to get right and puts the work on the user. Nouri
+- **Chat as the main screen.** Chat is hard to get right and puts the work on the user. Katori
   speaks through cards, sheets and nudges instead.
 - **A separate profile screen.** Goals and progress live on Today; the plan is one tap away.
 
@@ -63,7 +63,7 @@ On tablets and desktop web the same sheets become centred dialogs:
   Indian food action ("roasted chana instead of fried snacks"). The model never improvises advice.
 - **Show the why.** The plan explains its own maths ("1,379 kcal at rest, about 1,900 on a lightly
   active day, minus 500 to lose about 0.5 kg a week"). The assistant card always carries a reason.
-- **Indian context first.** Katori, roti counts, Hindi and English voice notes, ft/in height,
+- **Indian context first.** Katori (bowl) portions, roti counts, Hindi and English voice notes, ft/in height,
   IST day boundaries, dal and paneer in every suggestion.
 - **Remaining, not consumed.** Rings show what is left today, which is what a person decides on.
 - **One clear action per screen, and every failure has a way forward:** retry, retake, record

@@ -13,7 +13,7 @@ export const LIMITS = {
 
 export function validateName(name: string): string | null {
   const trimmed = name.trim();
-  if (!trimmed) return 'What should Nouri call you?';
+  if (!trimmed) return 'What should Katori call you?';
   if (trimmed.length > LIMITS.name.max) return 'Please use a shorter name.';
   return null;
 }
@@ -21,7 +21,7 @@ export function validateName(name: string): string | null {
 export function validateAge(age: number | null): string | null {
   if (age === null) return 'Please enter your age.';
   if (!Number.isInteger(age)) return 'Please enter your age in whole years.';
-  if (age < LIMITS.age.min) return 'Nouri is built for adults 16 and up.';
+  if (age < LIMITS.age.min) return 'Katori is built for adults 16 and up.';
   if (age > LIMITS.age.max) return 'That age looks unusual. Please check it.';
   return null;
 }

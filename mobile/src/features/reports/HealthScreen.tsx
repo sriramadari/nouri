@@ -91,7 +91,7 @@ function Reading() {
     <Card style={styles.reading} accessibilityLabel="Reading your report" accessible>
       <Text variant="heading">Reading your report</Text>
       <Text color="textSecondary">
-        Nouri is finding each result, converting units and comparing with healthy ranges. This can
+        Katori is finding each result, converting units and comparing with healthy ranges. This can
         take up to a minute.
       </Text>
       <Skeleton height={44} radius={radii.md} />
@@ -184,7 +184,7 @@ function LatestReport({
         <EmptyState
           icon="health"
           title="Your lab results, explained"
-          message="Upload a blood report. Nouri finds sugar, cholesterol, vitamin D and more, explains each one, and adjusts your plan."
+          message="Upload a blood report. Katori finds sugar, cholesterol, vitamin D and more, explains each one, and adjusts your plan."
         />
         <UploadButtons onChoose={onUpload} />
         <Text variant="caption" color="textMuted" align="center">

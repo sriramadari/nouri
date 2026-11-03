@@ -4,7 +4,7 @@ import { Platform } from 'react-native';
 const API_PORT = 3000;
 
 /**
- * Where the Nouri API lives.
+ * Where the Katori API lives.
  * - EXPO_PUBLIC_API_URL wins when set (always set for release builds).
  * - In development it falls back to the computer serving the app: the Metro host on a phone
  *   (same Wi-Fi, zero setup) or the page's host on web.

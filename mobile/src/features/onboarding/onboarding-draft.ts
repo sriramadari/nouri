@@ -48,6 +48,6 @@ export const useOnboardingDraft = create<OnboardingDraftState>()(
       update: (changes) => set(changes),
       reset: () => set(EMPTY_DRAFT),
     }),
-    { name: 'nouri.onboardingDraft', storage: persistStorage },
+    { name: 'katori.onboardingDraft', storage: persistStorage },
   ),
 );

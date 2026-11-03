@@ -1,26 +1,26 @@
 {
   "expo": {
-    "name": "Nouri",
-    "slug": "nouri",
+    "name": "Katori",
+    "slug": "katori",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "nouri",
+    "scheme": "katori",
     "userInterfaceStyle": "light",
     "ios": {
       "icon": "./assets/images/icon.png",
-      "bundleIdentifier": "app.nouri.mobile",
+      "bundleIdentifier": "app.katori.mobile",
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#3F8F67",
+        "backgroundColor": "#221C17",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "app.nouri.mobile",
+      "package": "app.katori.mobile",
       "versionCode": 1
     },
     "web": {
@@ -42,15 +42,15 @@
       [
         "expo-image-picker",
         {
-          "cameraPermission": "Nouri uses the camera to snap your meals and lab reports.",
-          "photosPermission": "Nouri reads the meal or report photo you choose.",
+          "cameraPermission": "Katori uses the camera to snap your meals and lab reports.",
+          "photosPermission": "Katori reads the meal or report photo you choose.",
           "microphonePermission": false
         }
       ],
       [
         "expo-audio",
         {
-          "microphonePermission": "Nouri listens to short voice notes about what you ate.",
+          "microphonePermission": "Katori listens to short voice notes about what you ate.",
           "recordAudioAndroid": true
         }
       ],
@@ -58,7 +58,7 @@
         "expo-notifications",
         {
           "icon": "./assets/images/android-icon-monochrome.png",
-          "color": "#2F7D57"
+          "color": "#E39B2D"
         }
       ],
       [
@@ -76,6 +76,6 @@
       "typedRoutes": true,
       "reactCompiler": true
     },
-    "description": "Eat smart, feel better. Snap or speak your meals; Nouri tracks, explains and nudges."
+    "description": "Eat well, know why. Snap or speak your meals; Katori tracks, explains and nudges."
   }
 }

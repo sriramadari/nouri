@@ -23,7 +23,7 @@ export const useCelebration = create<CelebrationState>()(
       finish: () => set({ playing: null }),
     }),
     {
-      name: 'nouri.celebration',
+      name: 'katori.celebration',
       storage: persistStorage,
       partialize: (state) => ({ celebratedOn: state.celebratedOn }),
     },

@@ -11,7 +11,7 @@ const DAYS_AHEAD = 3;
 const CHANNEL_ID = 'meal-reminders';
 
 const MESSAGES: Record<MealSlot, { title: string; body: string }> = {
-  breakfast: { title: 'Breakfast time?', body: 'Snap it and Nouri does the rest.' },
+  breakfast: { title: 'Breakfast time?', body: 'Snap it and Katori does the rest.' },
   lunch: { title: 'Lunch time', body: 'One photo keeps today on track.' },
   dinner: { title: 'Logging dinner?', body: 'A quick voice note works too.' },
 };
@@ -31,7 +31,7 @@ if (supported) {
 
 /**
  * Schedules one reminder per meal at the person's usual times for the next few days,
- * skipping meals already logged today, so Nouri reaches out first without nagging.
+ * skipping meals already logged today, so Katori reaches out first without nagging.
  * Rescheduled on every app open and every logged meal.
  */
 export async function scheduleMealReminders(

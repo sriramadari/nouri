@@ -4,7 +4,7 @@ const at = (day: number, hour: number, minute: number) =>
   new Date(2026, 10, day, hour, minute).toISOString();
 
 describe('reminder times', () => {
-  it('uses defaults before Nouri has learned anything', () => {
+  it('uses defaults before Katori has learned anything', () => {
     expect(learnReminderTimes([])).toEqual(DEFAULT_TIMES);
   });
 

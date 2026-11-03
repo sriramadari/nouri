@@ -131,11 +131,11 @@ function assertUsable(analysis: MealAnalysis, isPhoto: boolean): void {
     throw isPhoto
       ? new AppError(
           'MEAL_NOT_RECOGNIZED',
-          "Nouri couldn't make out the food. Try a clearer, well lit photo or add it by hand.",
+          "Katori couldn't make out the food. Try a clearer, well lit photo or add it by hand.",
         )
       : new AppError(
           'VOICE_NOT_UNDERSTOOD',
-          'Nouri couldn\'t catch that. Try again, for example "two rotis, dal and curd".',
+          'Katori couldn\'t catch that. Try again, for example "two rotis, dal and curd".',
         );
   }
 }

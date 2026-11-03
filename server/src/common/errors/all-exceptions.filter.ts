@@ -29,22 +29,22 @@ const AI_ERRORS: Record<AiFailure, { status: HttpStatus; code: string; message: 
   TIMEOUT: {
     status: HttpStatus.GATEWAY_TIMEOUT,
     code: 'AI_TIMEOUT',
-    message: 'Nouri took too long to answer. Please try again.',
+    message: 'Katori took too long to answer. Please try again.',
   },
   UNAVAILABLE: {
     status: HttpStatus.SERVICE_UNAVAILABLE,
     code: 'AI_UNAVAILABLE',
-    message: 'Nouri is very busy right now. Please try again in a moment.',
+    message: 'Katori is very busy right now. Please try again in a moment.',
   },
   INVALID_RESPONSE: {
     status: HttpStatus.BAD_GATEWAY,
     code: 'AI_INVALID_RESPONSE',
-    message: 'Nouri could not make sense of that. Please try again.',
+    message: 'Katori could not make sense of that. Please try again.',
   },
   REJECTED: {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     code: 'AI_REJECTED',
-    message: 'Nouri could not process that file. Please try a different one.',
+    message: 'Katori could not process that file. Please try a different one.',
   },
 };
 
@@ -55,7 +55,7 @@ const AI_ERRORS: Record<AiFailure, { status: HttpStatus; code: string; message: 
 const NEST_ERRORS: Partial<Record<number, { code: string; message: string }>> = {
   [HttpStatus.BAD_REQUEST]: {
     code: 'BAD_REQUEST',
-    message: 'Nouri could not understand that request.',
+    message: 'Katori could not understand that request.',
   },
   [HttpStatus.NOT_FOUND]: {
     code: 'NOT_FOUND',

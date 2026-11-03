@@ -31,7 +31,7 @@ export function ReportStep() {
       <StepLayout
         step="report"
         title="Reading your report"
-        subtitle="Nouri is finding each result and what it means. This can take up to a minute."
+        subtitle="Katori is finding each result and what it means. This can take up to a minute."
         onContinue={() => undefined}
         continueLabel="Reading…"
         continueLoading
@@ -63,7 +63,7 @@ export function ReportStep() {
           {flagged.length > 0 ? (
             <Text color="textSecondary">{flagged.map((marker) => marker.name).join(', ')}</Text>
           ) : (
-            <Text color="textSecondary">Everything Nouri tracks is in a healthy range.</Text>
+            <Text color="textSecondary">Everything Katori tracks is in a healthy range.</Text>
           )}
           {report.skipped && report.skipped.length > 0 ? (
             <Text variant="caption" color="textMuted">
@@ -80,7 +80,7 @@ export function ReportStep() {
     <StepLayout
       step="report"
       title="Have a recent blood report?"
-      subtitle="Optional. Nouri reads it and focuses your plan on what matters for you, like sugar, cholesterol or vitamin D."
+      subtitle="Optional. Katori reads it and focuses your plan on what matters for you, like sugar, cholesterol or vitamin D."
       onContinue={start}
       continueLabel="Upload report"
       secondary={<Button label="Skip for now" variant="ghost" onPress={finish} fullWidth />}

@@ -54,6 +54,6 @@ export const useProfileStore = create<ProfileState>()(
           needsSync: false,
         }),
     }),
-    { name: 'nouri.profile', storage: persistStorage },
+    { name: 'katori.profile', storage: persistStorage },
   ),
 );

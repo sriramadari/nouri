@@ -48,7 +48,7 @@ export async function saveMeal(meal: CreateMealInput): Promise<'saved' | 'queued
     throw new ApiError(
       400,
       'MEAL_REJECTED',
-      rejected.lastError ?? 'Nouri could not save this meal.',
+      rejected.lastError ?? 'Katori could not save this meal.',
     );
   }
   return pending.some((job) => job.id === meal.clientRequestId) ? 'queued' : 'saved';

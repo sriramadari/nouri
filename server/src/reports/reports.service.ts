@@ -39,7 +39,7 @@ export class ReportsService {
       if (markers.length === 0) {
         throw new AppError(
           'REPORT_UNREADABLE',
-          "Nouri couldn't read any results. Try a sharper, well lit photo with the whole page in view.",
+          "Katori couldn't read any results. Try a sharper, well lit photo with the whole page in view.",
           { skipped },
         );
       }

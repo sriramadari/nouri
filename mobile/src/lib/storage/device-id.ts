@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { randomUUID } from 'expo-crypto';
 
-const STORAGE_KEY = 'nouri.deviceId';
+const STORAGE_KEY = 'katori.deviceId';
 
 let cached: Promise<string> | undefined;
 

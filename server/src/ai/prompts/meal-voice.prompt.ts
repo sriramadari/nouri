@@ -2,7 +2,7 @@ import { MEAL_ESTIMATION_RULES } from './meal-shared.prompt.js';
 
 /** Voice step 1: listen only. No food knowledge here, so there is nothing to invent. */
 export const TRANSCRIBE_SYSTEM_PROMPT = `
-You transcribe short voice notes for Nouri, a health assistant in India.
+You transcribe short voice notes for Katori, a health assistant in India.
 
 Context: when someone speaks, they are usually saying what they ate. Expect Indian food
 words such as roti, chapati, paratha, dal, sabzi, chawal, rice, dahi, curd, paneer, poha,

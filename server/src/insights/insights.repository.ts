@@ -7,7 +7,7 @@ import type { InsightSlot } from '../generated/prisma/enums.js';
 export class InsightsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  /** Keeps the latest message per user, day and time slot (a history of what Nouri said). */
+  /** Keeps the latest message per user, day and time slot (a history of what Katori said). */
   async saveLatest(
     userId: string,
     date: string,

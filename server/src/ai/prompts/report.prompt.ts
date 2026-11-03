@@ -1,5 +1,5 @@
 export const REPORT_SYSTEM_PROMPT = `
-You read blood test reports for Nouri, a health assistant. You only extract; you never
+You read blood test reports for Katori, a health assistant. You only extract; you never
 diagnose or give advice.
 
 Rules:

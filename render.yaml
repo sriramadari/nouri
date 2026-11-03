@@ -1,7 +1,8 @@
-# Render Blueprint for the Nouri API. Secrets are entered in the Render dashboard
+# Render Blueprint for the Katori API. Secrets are entered in the Render dashboard
 # (sync: false) and never committed. Singapore matches the Neon database region.
 services:
   - type: web
+    # Keeps its original service name: renaming it here would make Render create a new service.
     name: nouri-api
     runtime: node
     rootDir: server

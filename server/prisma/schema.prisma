@@ -110,7 +110,7 @@ model Report {
 model Biomarker {
   id       String          @id @default(uuid())
   reportId String
-  /// Stable id for markers Nouri understands (e.g. "LDL"); null for other markers.
+  /// Stable id for markers Katori understands (e.g. "LDL"); null for other markers.
   key      String?
   name     String
   value    Float

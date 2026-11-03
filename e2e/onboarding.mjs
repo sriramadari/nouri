@@ -6,11 +6,11 @@ const page = await launch({ profileDir: `${S}/e2e-profile`, width: 500, height: 
 const step = (msg) => console.log('✓', msg);
 try {
   await page.goto(BASE + '/');
-  await page.waitForText('Hi, I’m Nouri');
+  await page.waitForText('Hi, I’m Katori');
   step('new user lands on onboarding (name step)');
 
   await page.click('Continue');
-  await page.waitForText('What should Nouri call you?');
+  await page.waitForText('What should Katori call you?');
   step('empty name shows a friendly error');
   await page.type('Your first name', 'Asha');
   await page.click('Continue');
@@ -19,7 +19,7 @@ try {
   step('name carried into the next card');
   await page.type('Age', '12');
   await page.click('Continue');
-  await page.waitForText('Nouri is built for adults 16 and up.');
+  await page.waitForText('Katori is built for adults 16 and up.');
   step('age under 16 rejected');
   await page.waitForText('Please choose one.');
   step('missing sex flagged');
@@ -77,12 +77,12 @@ try {
 
   await page.reload();
   await page.waitForText(', Asha');
-  if ((await page.text()).includes('Hi, I’m Nouri'))
+  if ((await page.text()).includes('Hi, I’m Katori'))
     throw new Error('Onboarding shown again after reload');
   step('after a reload (app restart) Today opens directly with the profile');
   await page.screenshot(`${S}/e2e-today.png`);
 
-  const deviceId = await page.evaluate(`localStorage.getItem('nouri.deviceId')`);
+  const deviceId = await page.evaluate(`localStorage.getItem('katori.deviceId')`);
   const me = await (
     await fetch(`${process.env.API_URL ?? 'http://localhost:3000'}/users/me`, {
       headers: { 'x-device-id': deviceId },

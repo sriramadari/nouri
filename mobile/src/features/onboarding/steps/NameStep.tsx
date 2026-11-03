@@ -21,7 +21,7 @@ export function NameStep() {
   return (
     <StepLayout
       step="name"
-      title="Hi, I’m Nouri"
+      title="Hi, I’m Katori"
       subtitle="You snap or speak your meals, I do the tracking and tell you what it means. First, what should I call you?"
       onContinue={onContinue}
     >

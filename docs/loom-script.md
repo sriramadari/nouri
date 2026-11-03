@@ -5,7 +5,7 @@ Record on a phone mirror or the web app at phone width. Start on a fresh install
 ## 0:00 to 0:20, the problem
 
 > "People in their twenties and thirties in India want to lose weight or fix a lab value, and
-> they quit calorie apps because logging is tedious and the numbers mean nothing. Nouri is a
+> they quit calorie apps because logging is tedious and the numbers mean nothing. Katori is a
 > personal assistant: you snap or speak once, it does the rest and tells you why."
 
 ## 0:20 to 0:55, flow 1: onboarding with a goal and a why
@@ -15,7 +15,7 @@ Record on a phone mirror or the web app at phone width. Start on a fresh install
 
 > "Five short cards, answers survive going back or closing the app."
 
-- On **Your Plan**, point at the two numbers and "How Nouri worked this out".
+- On **Your Plan**, point at the two numbers and "How Katori worked this out".
 
 > "The targets are deterministic, Mifflin St Jeor times activity minus 500, and the app shows its
 > maths. Each focus area comes with a one line why."

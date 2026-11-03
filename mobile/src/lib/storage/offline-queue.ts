@@ -63,7 +63,7 @@ export const useOfflineQueue = create<OfflineQueueState>()(
           };
         }),
     }),
-    { name: 'nouri.offlineQueue', storage: persistStorage },
+    { name: 'katori.offlineQueue', storage: persistStorage },
   ),
 );
 

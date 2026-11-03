@@ -44,7 +44,7 @@ const SHEET_TITLES: Record<Flow['step'], string> = {
 
 const VOICE_PROBLEMS: Record<Exclude<VoiceResult['status'], 'recorded'>, string> = {
   'too-short': 'That was very short. Hold on a second longer and say what you ate.',
-  silent: 'Nouri didn’t hear anything. Check your mic and try again, a little closer.',
+  silent: 'Katori didn’t hear anything. Check your mic and try again, a little closer.',
 };
 
 /**
@@ -125,7 +125,7 @@ export function MealLogger() {
       showToast(
         where === 'saved'
           ? `Meal saved · ${calories} kcal`
-          : 'Saved on your phone. Nouri will sync it when you’re online.',
+          : 'Saved on your phone. Katori will sync it when you’re online.',
         where === 'saved' ? 'success' : 'offline',
       );
       setFlow({ step: 'closed' });
@@ -236,7 +236,7 @@ const FAILURE_TITLES: Record<string, string> = {
   MEAL_NOT_RECOGNIZED: 'Couldn’t see the food',
   VOICE_NOT_UNDERSTOOD: 'Didn’t catch that',
   AI_TIMEOUT: 'That took too long',
-  AI_UNAVAILABLE: 'Nouri is busy',
+  AI_UNAVAILABLE: 'Katori is busy',
 };
 
 function FailedPanel({
@@ -262,7 +262,7 @@ function FailedPanel({
         offline={offline}
         message={
           offline
-            ? 'Nouri needs the internet to read a meal. Add it by hand now and it will sync later.'
+            ? 'Katori needs the internet to read a meal. Add it by hand now and it will sync later.'
             : error.message
         }
       />

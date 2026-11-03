@@ -31,7 +31,7 @@ export interface NormalizationResult {
 }
 
 /**
- * Turns raw extracted rows into Nouri's markers: matches names to known markers, converts
+ * Turns raw extracted rows into Katori's markers: matches names to known markers, converts
  * units, decides LOW / NORMAL / HIGH and attaches guidance. Pure and deterministic.
  */
 export function normalizeMarkers(raw: ExtractedMarker[], sex: Sex | null): NormalizationResult {
@@ -109,7 +109,7 @@ function normalizeKnown(
   };
 }
 
-/** Markers Nouri doesn't track are kept only when the lab printed a range to judge them by. */
+/** Markers Katori doesn't track are kept only when the lab printed a range to judge them by. */
 function normalizeUnknown(row: Reading, definition?: MarkerDefinition): NormalizedMarker | null {
   if (row.refLow === null && row.refHigh === null) return null;
   const status = statusFor(row.value, { low: row.refLow, high: row.refHigh });

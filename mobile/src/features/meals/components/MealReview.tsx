@@ -51,7 +51,7 @@ export function MealReview({ meal, onChange, saveError }: MealReviewProps) {
       ) : null}
       {anyToReview ? (
         <Text variant="caption" color="warning">
-          Nouri isn’t sure about the highlighted items. Tap one to check it.
+          Katori isn’t sure about the highlighted items. Tap one to check it.
         </Text>
       ) : null}
 

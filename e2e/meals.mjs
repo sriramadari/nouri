@@ -20,7 +20,7 @@ const page = await launch({
 const step = (msg) => console.log('✓', msg);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const serverMeals = async () => {
-  const deviceId = await page.evaluate(`localStorage.getItem('nouri.deviceId')`);
+  const deviceId = await page.evaluate(`localStorage.getItem('katori.deviceId')`);
   const now = new Date();
   const d = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   return (
@@ -54,7 +54,7 @@ try {
     chooserFile = process.env.MEAL_PHOTO;
     t = Date.now();
     await page.click('Choose a photo');
-    await page.waitForText('Nouri is looking at your plate', 15000);
+    await page.waitForText('Katori is looking at your plate', 15000);
     step('analyzing state with skeleton chips');
     await page.waitForText('Check your meal', 120000);
     const photoText = await page.text();

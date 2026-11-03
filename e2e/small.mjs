@@ -23,7 +23,7 @@ const overflow = () =>
   );
 try {
   await page.goto(BASE + '/');
-  await page.waitForText('Hi, I’m Nouri');
+  await page.waitForText('Hi, I’m Katori');
   await page.screenshot(`${S}/small-onboarding.png`);
   step(`onboarding at 320 px: horizontal overflow ${await overflow()} px`);
   await onboard(page, 'Sam');

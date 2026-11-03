@@ -23,7 +23,7 @@ export interface Guidance {
 export interface MarkerDefinition {
   key: MarkerKey;
   displayName: string;
-  /** The unit Nouri stores and shows. */
+  /** The unit Katori stores and shows. */
   unit: string;
   /** Matched against the printed name after lower casing and turning punctuation into spaces. */
   aliases: RegExp[];
@@ -38,7 +38,7 @@ const same = (value: number) => value;
 const times = (factor: number) => (value: number) => value * factor;
 
 /**
- * The eight markers Nouri understands, with reviewed, plain language guidance. Written by
+ * The eight markers Katori understands, with reviewed, plain language guidance. Written by
  * hand on purpose: health advice should be consistent and checked, not improvised by a model.
  * Ranges are common adult reference values; the lab's own printed range takes priority.
  */

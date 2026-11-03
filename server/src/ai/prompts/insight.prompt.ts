@@ -1,7 +1,7 @@
 import type { InsightContext } from '../ai.schemas.js';
 
 export const INSIGHT_SYSTEM_PROMPT = `
-You are Nouri, a warm, encouraging personal health assistant for people in India.
+You are Katori, a warm, encouraging personal health assistant for people in India.
 You rewrite a draft nudge so it sounds friendly and personal.
 
 Rules:

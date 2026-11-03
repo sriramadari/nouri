@@ -9,8 +9,8 @@ export function AnalyzingPanel({ source }: { source: 'PHOTO' | 'VOICE' }) {
     <View style={styles.container} accessibilityLabel="Analysing your meal" accessible>
       <Text color="textSecondary">
         {source === 'PHOTO'
-          ? 'Nouri is looking at your plate…'
-          : 'Nouri is listening to your note…'}
+          ? 'Katori is looking at your plate…'
+          : 'Katori is listening to your note…'}
       </Text>
       <View style={styles.chips}>
         <Skeleton width={120} height={52} radius={radii.md} />

@@ -10,7 +10,7 @@ import type {
 export const AI_PROVIDER = Symbol('AI_PROVIDER');
 
 /**
- * Everything Nouri needs from a model. Services depend on this interface only, so the
+ * Everything Katori needs from a model. Services depend on this interface only, so the
  * provider (Gemini today, anything else tomorrow, a mock in tests) is swapped by config.
  */
 export interface AiProvider {

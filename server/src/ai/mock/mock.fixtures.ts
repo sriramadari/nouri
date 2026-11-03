@@ -71,7 +71,7 @@ export const MOCK_VOICE_MEAL: VoiceMealAnalysis = {
 
 /**
  * A realistic report that also exercises the edge cases: glucose in mmol/L, an alias name,
- * a value that could not be read and a marker Nouri does not track.
+ * a value that could not be read and a marker Katori does not track.
  */
 export const MOCK_REPORT: ReportExtraction = {
   issue: 'NONE',

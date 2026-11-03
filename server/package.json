@@ -1,7 +1,7 @@
 {
-  "name": "nouri-server",
+  "name": "katori-server",
   "version": "0.0.1",
-  "description": "Nouri API: meals, reports and insights for the Nouri health assistant",
+  "description": "Katori API: meals, reports and insights for the Katori health assistant",
   "author": "",
   "private": true,
   "license": "UNLICENSED",

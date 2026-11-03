@@ -5,7 +5,7 @@ export interface ClockTime {
   minute: number;
 }
 
-/** Sensible defaults for India until Nouri has learned the person's own rhythm. */
+/** Sensible defaults for India until Katori has learned the person's own rhythm. */
 export const DEFAULT_TIMES: Record<MealSlot, ClockTime> = {
   breakfast: { hour: 8, minute: 30 },
   lunch: { hour: 13, minute: 30 },

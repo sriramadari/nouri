@@ -10,7 +10,7 @@ import {
 
 describe('onboarding validation', () => {
   it('asks for a name and trims spaces', () => {
-    expect(validateName('   ')).toBe('What should Nouri call you?');
+    expect(validateName('   ')).toBe('What should Katori call you?');
     expect(validateName('  Asha ')).toBeNull();
     expect(validateName('x'.repeat(51))).toMatch(/shorter/);
   });

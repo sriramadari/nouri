@@ -25,9 +25,9 @@ try {
   await page.goto(BASE + '/');
   await onboard(page, 'Kiran');
   await page.waitForText('Start a streak');
-  await page.waitForText('NOURI');
+  await page.waitForText('KATORI');
   const day1 = await page.text();
-  step(`assistant card on day one: "${day1.match(/NOURI\n([^\n]+)/)[1]}"`);
+  step(`assistant card on day one: "${day1.match(/KATORI\n([^\n]+)/)[1]}"`);
   if (!day1.includes('Start a streak')) throw new Error('Expected an unlit streak badge');
   if (!day1.includes('1,850') || !day1.includes('kcal left')) throw new Error('Rings missing');
   step('rings show 1,850 kcal left and 95 g protein to go; streak badge says "Start a streak"');
@@ -40,7 +40,7 @@ try {
   step(
     `rings updated: ${mid.match(/[\d,]+\nkcal left/)[0].replace('\n', ' ')}, ${mid.match(/\d+ g\nprotein to go/)[0].replace('\n', ' ')}`,
   );
-  step(`assistant now says: "${mid.match(/NOURI\n([^\n]+)/)[1]}"`);
+  step(`assistant now says: "${mid.match(/KATORI\n([^\n]+)/)[1]}"`);
 
   await addByHand('Dal rice and curd', 650, 42);
   await page.waitForText('Goal hit today');

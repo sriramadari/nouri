@@ -168,7 +168,7 @@ function DevGallery() {
 
       <Text variant="title">Cards and loading</Text>
       <Card tone="primaryTint">
-        <Text variant="bodyStrong">Nouri noticed you’re low on protein today</Text>
+        <Text variant="bodyStrong">Katori noticed you’re low on protein today</Text>
         <Text color="textSecondary">A katori of dal or curd at dinner closes the gap.</Text>
       </Card>
       <Card>
@@ -182,7 +182,7 @@ function DevGallery() {
         <EmptyState
           icon="camera"
           title="No meals yet"
-          message="Snap your first meal and Nouri does the rest."
+          message="Snap your first meal and Katori does the rest."
           action={{ label: 'Snap a meal', icon: 'camera', onPress: () => undefined }}
         />
       </Card>

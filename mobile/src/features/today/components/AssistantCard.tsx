@@ -15,12 +15,12 @@ export function AssistantCard({ message, why, tone }: AssistantCardProps) {
     <Card
       tone={tone === 'praise' ? 'primaryTint' : 'accentTint'}
       accessibilityRole="summary"
-      accessibilityLabel={`Nouri says: ${message}. ${why}`}
+      accessibilityLabel={`Katori says: ${message}. ${why}`}
     >
       <View style={styles.label}>
         <Icon name="sparkles" size={16} color={tone === 'praise' ? 'primary' : 'accent'} />
         <Text variant="label" color={tone === 'praise' ? 'primary' : 'textSecondary'}>
-          NOURI
+          KATORI
         </Text>
       </View>
       <Text variant="heading">{message}</Text>
