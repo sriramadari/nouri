@@ -16,8 +16,9 @@ the maths, explains why it matters for _your_ goal and lab results, and reaches 
 ## Try it
 
 - **Android:** [download the APK](https://github.com/sriramadari/nouri/releases/latest/download/katori.apk)
-  and open it on the phone (allow installing from this source when Android asks). It talks to
-  the hosted API, so it works straight away.
+  (version 1.1.0, about 38 MB, 64 bit ARM phones) and open it on the phone; allow installing
+  from this source when Android asks. It talks to the hosted API, so it works straight away.
+- **Web:** `cd mobile && npx expo start --web`, or open the app at phone width in Chrome.
 - **API:** https://nouri-api-sve8.onrender.com/health. It runs on a free tier that sleeps when
   idle; the first request after a quiet spell takes about 30 seconds, and the app says so while
   it waits.
@@ -127,11 +128,14 @@ flowchart LR
     CT --> SV[Services<br/>business rules]
     SV --> RP[Repositories<br/>Prisma only]
     SV --> AI[[AiProvider interface]]
-    AI --> GP[GeminiProvider]
-    AI --> MP[MockProvider]
+    AI --> RT[RoutingAiProvider]
+    RT -- "photos, reports, insights" --> GP[GeminiProvider]
+    RT -- "voice notes" --> GV[GroqVoiceProvider]
+    AI -.-> MP[MockProvider<br/>tests and demos]
   end
   RP --> DB[(Neon Postgres)]
   GP -- "model chain with fallback" --> GM[Gemini API]
+  GV -- "Whisper, then GPT-OSS" --> GQ[Groq API<br/>open models]
 ```
 
 **Mobile (`mobile/`)**: Expo SDK 58, TypeScript strict, Expo Router. Routes are one line
@@ -189,15 +193,15 @@ idempotency keys; an indexed `(userId, eatenAt)` for day queries; AI provider sw
 
 ## Edge cases handled
 
-| Area       | Cases                                                                                                                                                                                                                             |
-| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Meal photo | Not food, blurry, low confidence items highlighted for confirmation, AI timeout or busy (retry with the same photo), camera permission denied (Settings, choose a photo, or add by hand)                                          |
-| Voice      | Silence (checked on the phone and by the server's speech check), too short, unclear speech, microphone denied, 30 s limit with auto stop, double stop guarded                                                                     |
-| Saving     | Offline: kept on the phone, counted in today, "Waiting to sync", synced on reconnect or app foreground; double tap: button disabled plus an idempotency key created with the draft; server rejection shown, never retried forever |
-| Reports    | Not a report, unreadable, partial extraction (lists what was skipped), unknown markers (judged by the lab's printed range), unit differences, repeated markers, cancelled picker                                                  |
-| Onboarding | Validation with friendly messages after the first Continue, back keeps answers, restart resumes at the last step, missing answer at the end sends the person back, offline finish syncs later                                     |
-| App        | Saved data loads behind the splash (no flicker), error boundary, offline banners, 320 px screens, reduced motion, Android back closes sheets, screen reader labels                                                                |
-| Server     | Env validated at boot, database asleep or down (health 503, no crash), framework errors replaced with plain messages, upload type and size limits                                                                                 |
+| Area       | Cases                                                                                                                                                                                                                                                                  |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Meal photo | Not food, blurry, low confidence items highlighted for confirmation, AI timeout or busy (retry with the same photo), camera permission denied (Settings, choose a photo, or add by hand)                                                                               |
+| Voice      | Silence (checked on the phone and by the server's speech check), too short, unclear speech, microphone denied, 30 s limit with auto stop, double stop guarded                                                                                                          |
+| Saving     | Offline: kept on the phone, counted in today, "Waiting to sync", synced on reconnect or app foreground; double tap: button disabled plus an idempotency key created with the draft; server rejection shown, never retried forever                                      |
+| Reports    | Not a report, unreadable, partial extraction (lists what was skipped), unknown markers (judged by the lab's printed range), unit differences, repeated markers, cancelled picker                                                                                       |
+| Onboarding | Validation with friendly messages after the first Continue, back keeps answers, restart resumes at the last step, missing answer at the end sends the person back, offline finish syncs later                                                                          |
+| App        | Saved data loads behind the splash (no flicker), error boundary, offline banners, 320 px screens, reduced motion, Android back closes sheets, screen reader labels, a sleeping free tier server woken once with a "Waking up" note instead of every request timing out |
+| Server     | Env validated at boot, database asleep or down (health 503, no crash), framework errors replaced with plain messages, upload type and size limits, parallel first requests from a new phone creating its user only once                                                |
 
 ## Getting started
 
@@ -236,31 +240,40 @@ In development the app finds the API automatically on port 3000 of the computer 
 
 ## Testing
 
-| Layer       | What                                                                                                                                  | Command                                             |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
-| Server unit | Targets, streak, biomarker normalisation, Gemini retry and fallback, insights fallback, guard, error filter, env                      | `cd server && npm test`                             |
-| Server e2e  | Real HTTP stack with in memory repositories and the mock AI                                                                           | `cd server && npm run test:e2e`                     |
-| Mobile unit | Targets (parity with the server), focus areas, assistant rules, weekly wins, validation, meal maths, offline first saving, API client | `cd mobile && npm test`                             |
-| Browser e2e | Every flow against the real API and database, offline, double tap, 320 px                                                             | `./e2e/run.sh` (see [e2e/README.md](e2e/README.md)) |
+| Layer       | What                                                                                                                                                              | Command                                             |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| Server unit | Targets, streak, biomarker normalisation, Gemini budget and fallback, Groq voice and silence, insights fallback, guard, error filter, env                         | `cd server && npm test`                             |
+| Server e2e  | Real HTTP stack with in memory repositories and the mock AI                                                                                                       | `cd server && npm run test:e2e`                     |
+| Mobile unit | Targets (parity with the server), focus areas, assistant rules, weekly wins, validation, meal maths, offline first saving, API client and server wake up, uploads | `cd mobile && npm test`                             |
+| Browser e2e | Every flow against the real API and database, offline, double tap, 320 px                                                                                         | `./e2e/run.sh` (see [e2e/README.md](e2e/README.md)) |
 
 ## Deployment and builds
 
 - **API:** `render.yaml` is a Render Blueprint (Singapore, next to the Neon database). Secrets
-  are set in the Render dashboard. Migrations run during the build.
-- **Android:** `eas build --profile preview --platform android` builds an installable APK.
-  Release builds are minified and resource shrunk (`expo-build-properties`). The published APK
-  is built locally for 64 bit ARM only, which covers current Android phones and keeps it small:
+  (`DATABASE_URL`, `DIRECT_URL`, `GEMINI_API_KEY`, `GROQ_API_KEY`) are set in the Render
+  dashboard. Migrations run during the build.
+- **Android:** release builds are minified and resource shrunk (`expo-build-properties`). An EAS
+  build (`eas build --profile preview --platform android`) bundles native code for every phone
+  chip and came out at 108 MB, so the published APK is built locally for 64 bit ARM only, which
+  covers current Android phones, at about 38 MB:
   `EXPO_PUBLIC_API_URL=<api> npx expo prebuild -p android --clean`, then
-  `./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a` in `android/`. It is attached
-  to a GitHub release as `katori.apk`.
+  `./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a` in `android/`. Each version is
+  attached to a GitHub release as `katori.apk`, so the download link above always serves the
+  latest.
+- **Phones and uploads:** Expo's `fetch`, the default on phones since SDK 52, rejects React
+  Native's classic `{ uri, name, type }` file parts, so uploads read the file with
+  `expo-file-system` and send its bytes with our own name and type.
 
 ## Known limitations and what comes next
 
-- **Gemini free tier:** about 20 requests per model per day. The model chain absorbs it in
-  testing; real use needs billing enabled.
+- **Gemini free tier:** about 20 requests per model per day, and slow (20 to 40 s) when busy.
+  Voice moved to Groq for that reason; photos and reports still need Gemini, so real use needs
+  billing enabled (Groq's free tier has no vision model on this account).
+- **Free hosting sleeps.** The first request after a quiet spell takes about 30 seconds; the app
+  says so while it waits.
 - **Portions are estimates.** Chips and the portion stepper make correction fast, but there is no
   barcode or recipe database yet.
 - **One profile per device.** No sync across devices until accounts exist.
-- **Next:** an overall deadline per AI request, rate limiting on AI endpoints, a shared types
+- **Next:** rate limiting on AI endpoints, photos on an open vision model, a shared types
   package between app and server, editing the profile from the plan, weekly emails or summaries,
   and push notifications from the server for insights.

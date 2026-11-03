@@ -2,7 +2,7 @@
   "expo": {
     "name": "Katori",
     "slug": "katori",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "katori",
@@ -21,7 +21,7 @@
       },
       "predictiveBackGestureEnabled": false,
       "package": "app.katori.mobile",
-      "versionCode": 2
+      "versionCode": 3
     },
     "web": {
       "output": "single",
