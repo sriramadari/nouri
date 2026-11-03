@@ -37,12 +37,11 @@ describe('InsightsService', () => {
       source: 'ai',
       message: 'Asha, dinner is your protein moment.',
     });
-    expect(saveLatest).toHaveBeenCalledWith(
-      'user-1',
-      '2026-11-03',
-      'AFTERNOON',
-      expect.objectContaining({ source: 'ai' }),
-    );
+    // Only the columns the Insight table has; `source` belongs to the response alone.
+    expect(saveLatest).toHaveBeenCalledWith('user-1', '2026-11-03', 'AFTERNOON', {
+      message: 'Asha, dinner is your protein moment.',
+      why: 'You are at 20 of 80 g.',
+    });
   });
 
   it('falls back to the rules draft when the AI fails', async () => {

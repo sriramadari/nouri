@@ -47,7 +47,7 @@ export class InsightsService {
     }
 
     await this.insights
-      .saveLatest(user.id, input.date, input.slot, result)
+      .saveLatest(user.id, input.date, input.slot, { message: result.message, why: result.why })
       .catch((error: unknown) => this.logger.warn(`Could not store insight: ${String(error)}`));
     return result;
   }
