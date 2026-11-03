@@ -1,6 +1,5 @@
 import { Fraunces_600SemiBold } from '@expo-google-fonts/fraunces/600SemiBold';
 import { Fraunces_700Bold } from '@expo-google-fonts/fraunces/700Bold';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { type ErrorBoundaryProps, Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
@@ -40,11 +39,9 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={styles.root}>
       <QueryClientProvider client={queryClient}>
-        <BottomSheetModalProvider>
-          <StatusBar style="dark" />
-          {hydrated ? <AppNavigator /> : null}
-          <ToastHost />
-        </BottomSheetModalProvider>
+        <StatusBar style="dark" />
+        {hydrated ? <AppNavigator /> : null}
+        <ToastHost />
       </QueryClientProvider>
     </GestureHandlerRootView>
   );

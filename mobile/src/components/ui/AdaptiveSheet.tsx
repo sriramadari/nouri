@@ -1,15 +1,6 @@
+import { type ReactNode, useEffect, useState } from 'react';
 import {
-  BottomSheetBackdrop,
-  type BottomSheetBackdropProps,
-  BottomSheetFooter,
-  type BottomSheetFooterProps,
-  BottomSheetModal,
-  BottomSheetScrollView,
-  BottomSheetTextInput,
-} from '@gorhom/bottom-sheet';
-import { type ReactNode, useCallback, useEffect, useRef } from 'react';
-import {
-  BackHandler,
+  KeyboardAvoidingView,
   Modal,
   Platform,
   Pressable,
@@ -17,12 +8,20 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
+import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { scheduleOnRN } from 'react-native-worklets';
 
-import { cardShadow, colors, MIN_TAP_TARGET, radii, spacing, useIsWideScreen } from '@/theme';
+import { cardShadow, colors, radii, spacing, useIsWideScreen } from '@/theme';
 
 import { Icon } from './Icon';
-import { TextInputComponentContext } from './TextField';
 import { Text } from './Text';
 
 export interface AdaptiveSheetProps {
@@ -34,122 +33,133 @@ export interface AdaptiveSheetProps {
   footer?: ReactNode;
 }
 
+const SLIDE_MS = 260;
+/** Dragging the sheet down further than this (or flicking it) closes it. */
+const DISMISS_DISTANCE = 120;
+const DISMISS_VELOCITY = 900;
+/** Far enough to start fully off screen on any phone. */
+const OFFSCREEN = 900;
+
 /**
  * The platform appropriate way to show a focused task: a bottom sheet on phones (thumb
- * reachable, swipe to dismiss) and a centred dialog on tablets and desktop web, where a
+ * reachable, swipe down to dismiss) and a centred dialog on tablets and desktop web, where a
  * sheet stretched across a wide screen looks and feels wrong. Callers never know which.
  *
- * Narrow web (a phone browser) gets a simple bottom anchored modal: the gesture driven sheet
- * is built for native and mis-sizes its footer in the browser.
+ * Built on React Native's Modal with Reanimated and Gesture Handler, which the app already
+ * ships, so it behaves the same on Android, iOS and the web.
  */
 export function AdaptiveSheet(props: AdaptiveSheetProps) {
   const isWide = useIsWideScreen();
-  if (isWide) return <ModalSheet {...props} placement="center" />;
-  if (Platform.OS === 'web') return <ModalSheet {...props} placement="bottom" />;
-  return <BottomSheet {...props} />;
+  return isWide ? <CenteredDialog {...props} /> : <BottomSheet {...props} />;
 }
 
 function BottomSheet({ visible, onClose, title, children, footer }: AdaptiveSheetProps) {
-  const ref = useRef<BottomSheetModal>(null);
   const insets = useSafeAreaInsets();
+  const reduceMotion = useReducedMotion();
+  // Stays mounted while the closing slide plays, then unmounts.
+  const [mounted, setMounted] = useState(visible);
+  const offset = useSharedValue(OFFSCREEN);
+
+  if (visible && !mounted) setMounted(true);
 
   useEffect(() => {
-    if (visible) ref.current?.present();
-    else ref.current?.dismiss();
-  }, [visible]);
+    const duration = reduceMotion ? 0 : SLIDE_MS;
+    if (visible) {
+      offset.set(withTiming(0, { duration, easing: Easing.out(Easing.cubic) }));
+    } else {
+      offset.set(
+        withTiming(OFFSCREEN, { duration }, (finished) => {
+          if (finished) scheduleOnRN(setMounted, false);
+        }),
+      );
+    }
+  }, [visible, reduceMotion, offset]);
 
-  // Android back button closes the sheet first, like every native sheet does.
-  useEffect(() => {
-    if (!visible) return;
-    const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
-      onClose();
-      return true;
+  // Swipe down on the handle or title to close, like a native sheet.
+  const drag = Gesture.Pan()
+    .onUpdate((event) => {
+      offset.set(Math.max(0, event.translationY));
+    })
+    .onEnd((event) => {
+      if (event.translationY > DISMISS_DISTANCE || event.velocityY > DISMISS_VELOCITY) {
+        scheduleOnRN(onClose);
+      } else {
+        offset.set(withTiming(0, { duration: 180 }));
+      }
     });
-    return () => subscription.remove();
-  }, [visible, onClose]);
 
-  const renderBackdrop = useCallback(
-    (backdropProps: BottomSheetBackdropProps) => (
-      <BottomSheetBackdrop
-        {...backdropProps}
-        appearsOnIndex={0}
-        disappearsOnIndex={-1}
-        pressBehavior="close"
-      />
-    ),
-    [],
-  );
-
-  const renderFooter = useCallback(
-    (footerProps: BottomSheetFooterProps) => (
-      <BottomSheetFooter {...footerProps} bottomInset={insets.bottom}>
-        <View style={styles.sheetFooter}>{footer}</View>
-      </BottomSheetFooter>
-    ),
-    [footer, insets.bottom],
-  );
-
-  // The pinned footer floats over the content, so leave room for it below the last item.
-  const footerSpace = footer ? MIN_TAP_TARGET + spacing.lg * 2 : 0;
+  const sheetStyle = useAnimatedStyle(() => ({ transform: [{ translateY: offset.get() }] }));
+  const backdropStyle = useAnimatedStyle(() => ({ opacity: 1 - offset.get() / OFFSCREEN }));
 
   return (
-    <BottomSheetModal
-      ref={ref}
-      onDismiss={onClose}
-      enableDynamicSizing
-      backdropComponent={renderBackdrop}
-      footerComponent={footer ? renderFooter : undefined}
-      keyboardBehavior="interactive"
-      keyboardBlurBehavior="restore"
-      android_keyboardInputMode="adjustResize"
-      backgroundStyle={styles.sheetBackground}
-      handleIndicatorStyle={styles.handle}
-      accessibilityLabel={title}
+    <Modal
+      visible={mounted}
+      transparent
+      animationType="none"
+      statusBarTranslucent
+      onRequestClose={onClose}
     >
-      <BottomSheetScrollView
-        contentContainerStyle={[
-          styles.body,
-          { paddingBottom: insets.bottom + spacing.lg + footerSpace },
-        ]}
-      >
-        <SheetHeader title={title} onClose={onClose} />
-        <TextInputComponentContext.Provider value={BottomSheetTextInput}>
-          {children}
-        </TextInputComponentContext.Provider>
-      </BottomSheetScrollView>
-    </BottomSheetModal>
+      {/* Gestures inside an Android Modal need their own root view. */}
+      <GestureHandlerRootView style={styles.fill}>
+        <KeyboardAvoidingView
+          style={styles.fill}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <Animated.View style={[StyleSheet.absoluteFill, styles.backdrop, backdropStyle]}>
+            <Pressable
+              style={styles.fill}
+              onPress={onClose}
+              accessibilityRole="button"
+              accessibilityLabel="Close"
+            />
+          </Animated.View>
+
+          <Animated.View
+            style={[styles.sheet, { paddingBottom: footer ? 0 : insets.bottom }, sheetStyle]}
+            accessibilityViewIsModal
+          >
+            <GestureDetector gesture={drag}>
+              <View style={styles.dragArea}>
+                <View style={styles.handle} />
+                <View style={styles.headerPadding}>
+                  <SheetHeader title={title} onClose={onClose} />
+                </View>
+              </View>
+            </GestureDetector>
+            <ScrollView
+              contentContainerStyle={styles.sheetBody}
+              keyboardShouldPersistTaps="handled"
+            >
+              {children}
+            </ScrollView>
+            {footer ? (
+              <View style={[styles.footer, { paddingBottom: insets.bottom + spacing.lg }]}>
+                {footer}
+              </View>
+            ) : null}
+          </Animated.View>
+        </KeyboardAvoidingView>
+      </GestureHandlerRootView>
+    </Modal>
   );
 }
 
-function ModalSheet({
-  visible,
-  onClose,
-  title,
-  children,
-  footer,
-  placement,
-}: AdaptiveSheetProps & { placement: 'center' | 'bottom' }) {
-  const isBottom = placement === 'bottom';
+function CenteredDialog({ visible, onClose, title, children, footer }: AdaptiveSheetProps) {
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType={isBottom ? 'slide' : 'fade'}
-      onRequestClose={onClose}
-    >
-      <View style={[styles.overlay, isBottom && styles.overlayBottom]}>
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      <View style={[styles.fill, styles.backdrop, styles.centered]}>
         <Pressable
           style={StyleSheet.absoluteFill}
           onPress={onClose}
           accessibilityRole="button"
           accessibilityLabel="Close"
         />
-        <View style={[styles.dialog, isBottom && styles.dialogBottom]} accessibilityViewIsModal>
-          <ScrollView contentContainerStyle={styles.body}>
+        <View style={styles.dialog} accessibilityViewIsModal>
+          <ScrollView contentContainerStyle={styles.dialogBody}>
             <SheetHeader title={title} onClose={onClose} />
             {children}
           </ScrollView>
-          {footer ? <View style={styles.dialogFooter}>{footer}</View> : null}
+          {footer ? <View style={styles.footer}>{footer}</View> : null}
         </View>
       </View>
     </Modal>
@@ -176,13 +186,29 @@ function SheetHeader({ title, onClose }: { title: string; onClose: () => void })
 }
 
 const styles = StyleSheet.create({
-  sheetBackground: {
+  fill: { flex: 1 },
+  backdrop: { backgroundColor: colors.overlay },
+  sheet: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    maxHeight: '90%',
     backgroundColor: colors.surface,
     borderTopLeftRadius: radii.xl,
     borderTopRightRadius: radii.xl,
+    ...cardShadow,
   },
-  handle: { backgroundColor: colors.border, width: 40 },
-  body: { padding: spacing.lg, gap: spacing.lg },
+  dragArea: { paddingTop: spacing.sm },
+  handle: {
+    alignSelf: 'center',
+    width: 40,
+    height: 5,
+    borderRadius: radii.pill,
+    backgroundColor: colors.border,
+  },
+  headerPadding: { paddingHorizontal: spacing.lg, paddingTop: spacing.md },
+  sheetBody: { padding: spacing.lg, gap: spacing.lg },
   header: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   title: { flex: 1 },
   close: {
@@ -193,13 +219,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  overlay: {
-    flex: 1,
-    backgroundColor: colors.overlay,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: spacing.xl,
+  footer: {
+    padding: spacing.lg,
+    backgroundColor: colors.surface,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.border,
   },
+  centered: { alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
   dialog: {
     width: '100%',
     maxWidth: 520,
@@ -209,23 +235,5 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...cardShadow,
   },
-  sheetFooter: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.lg,
-    backgroundColor: colors.surface,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.border,
-  },
-  overlayBottom: { justifyContent: 'flex-end', padding: 0 },
-  dialogBottom: {
-    maxWidth: undefined,
-    maxHeight: '90%',
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
-  },
-  dialogFooter: {
-    padding: spacing.lg,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.border,
-  },
+  dialogBody: { padding: spacing.lg, gap: spacing.lg },
 });

@@ -1,22 +1,9 @@
-import {
-  type ComponentRef,
-  type ComponentType,
-  createContext,
-  type Ref,
-  useContext,
-  useState,
-} from 'react';
+import { type ComponentRef, type Ref, useState } from 'react';
 import { StyleSheet, TextInput, type TextInputProps, View } from 'react-native';
 
 import { colors, MIN_TAP_TARGET, radii, spacing } from '@/theme';
 
 import { Text } from './Text';
-
-/**
- * Lets a container swap the input implementation. The native bottom sheet provides its own
- * input so the keyboard pushes the sheet up instead of covering the field.
- */
-export const TextInputComponentContext = createContext<ComponentType<TextInputProps> | null>(null);
 
 export interface TextFieldProps extends Omit<TextInputProps, 'style'> {
   label: string;
@@ -37,7 +24,6 @@ export function TextField({
   ...props
 }: TextFieldProps) {
   const [focused, setFocused] = useState(false);
-  const Input = (useContext(TextInputComponentContext) ?? TextInput) as typeof TextInput;
   const borderColor = error ? colors.danger : focused ? colors.primary : colors.border;
 
   return (
@@ -46,7 +32,7 @@ export function TextField({
         {label}
       </Text>
       <View style={[styles.field, { borderColor }]}>
-        <Input
+        <TextInput
           ref={ref}
           accessibilityLabel={label}
           accessibilityHint={error ?? undefined}

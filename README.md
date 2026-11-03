@@ -140,7 +140,11 @@ and logic. Pure health logic lives in `src/lib/health` with unit tests. Server s
 Query; local state (profile, onboarding draft, offline queue) in persisted Zustand stores. All
 colours, spacing and type come from `src/theme`. UI kit: `Button`, `Card`, `Chip`, `ProgressRing`
 (SVG plus Reanimated, no chart library), `AdaptiveSheet` (bottom sheet on phones, centred dialog
-on wide screens), `EmptyState`, `ErrorState`, `Skeleton`, `Toast`, `Confetti`.
+on wide screens), `EmptyState`, `ErrorState`, `Skeleton`, `Toast`, `Confetti`. The sheet is our
+own, about 200 lines on React Native's `Modal` with Reanimated and Gesture Handler (slide up,
+swipe down or back to close, keyboard aware, reduced motion). `@gorhom/bottom-sheet` was used
+first, but its modal never appeared on React Native 0.88 with Reanimated 4, so it was replaced
+and removed from the bundle.
 
 **Server (`server/`)**: NestJS 12, Prisma 7 on Neon Postgres, Zod for all validation.
 Controller, service and repository layers; services throw coded `AppError`s and never touch HTTP
