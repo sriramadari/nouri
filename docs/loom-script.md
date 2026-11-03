@@ -1,80 +1,104 @@
 # Loom script (about 3 minutes)
 
-Recorded on the web build in Chrome at phone size, against the hosted API.
+Cue cards, not lines to read. **Do** is what happens on screen; **Say** is the idea to get across,
+in your own words. Talk while things load.
 
-## Before recording
+## Setup (before recording)
 
-1. Build and serve the production web app (no dev buttons):
-   ```bash
-   cd mobile
-   EXPO_PUBLIC_API_URL=https://nouri-api-sve8.onrender.com npx expo export -p web
-   npx serve dist
-   ```
-2. Wake the API: open https://nouri-api-sve8.onrender.com/health once.
-3. Chrome: open the app, DevTools → device toolbar → iPhone 14 Pro (or any phone size). Use a
-   fresh profile or clear site data so onboarding starts from the beginning.
-4. Keep ready: a food photo (a plate from above) and `e2e/samples/lab-report.pdf`.
-5. Allow the microphone for the site.
+```bash
+cd mobile
+EXPO_PUBLIC_API_URL=https://nouri-api-sve8.onrender.com npx expo export -p web
+npx serve dist
+```
 
-## 0:00 – 0:20 · The idea
+- Open https://nouri-api-sve8.onrender.com/health once to wake the server.
+- Chrome → DevTools → device toolbar → iPhone 14 Pro. Clear site data so onboarding starts fresh.
+- Ready: a food photo (plate from above) and `e2e/samples/lab-report.pdf`. Allow the microphone.
+- One practice run at most: the photo, voice and report steps use the Gemini free quota.
 
-> "This is Katori, a personal health assistant for busy people in India who want to lose weight
-> or fix a lab value. Calorie apps fail because logging is tedious and the numbers mean nothing.
-> Here you snap or speak once, and Katori does the work and tells you why."
+---
 
-## 0:20 – 0:55 · Onboarding with a goal and a why
+## 1 · The idea (0:00 – 0:20)
 
-- Welcome screen → **Let's begin**.
-- Tap Continue on an empty name to show the friendly error, then type a name.
-- Age and sex, height and weight (flip to ft/in), activity, goal **Lose weight**. Skip the report.
-- On **Your plan**, point at the two numbers and "How Katori worked this out".
+**Say**
 
-> "Five short questions. The targets are plain maths, not AI, and the app shows its working.
-> Each focus area comes with a reason."
+- Katori: a personal health assistant for busy people in India.
+- The problem: calorie apps are tedious and the numbers mean nothing, so people quit.
+- The idea: snap or speak once; Katori does the work and tells you why.
 
-## 0:55 – 1:45 · Log a meal (the hero flow)
+## 2 · Onboarding (0:20 – 0:55)
 
-- Tap the turmeric **+** in the middle of the tab bar.
-- **Snap** → pick the food photo (on the phone this opens the camera).
-- On the review sheet: remove one item, tap another and make the portion bigger; the total
-  updates. Point at the highlighted, less certain item. **Save**.
+**Do**
 
-> "The AI reads the photo, the totals are summed in code, and doubtful items are flagged for a
-> quick check."
+- Welcome screen → Let's begin.
+- Continue with an empty name (friendly error), then fill in the five questions; flip height to
+  ft/in. Goal: Lose weight. Skip the report.
+- Your plan: point at the two numbers and "How Katori worked this out".
 
-- Back on Today the rings have moved. Tap **+** → **Speak** → say "two rotis, dal and a bowl of
-  curd" → **Done**. Show "Heard: …" and save.
-- Offline: DevTools Network → **Offline**. **+** → **Type it in** → "Masala chai, 90 kcal" →
-  save. Show "Waiting to sync". Switch back to **No throttling**: it syncs by itself.
+**Say**
 
-## 1:45 – 2:20 · Today: the assistant comes to you
+- Five short questions, answers kept if you go back or close the app.
+- Targets are plain maths, not AI, and the app shows its working.
+- Every focus area has a why.
 
-- Assistant card at the top: point at the message and its **Why**.
+## 3 · Log a meal (0:55 – 1:45)
 
-> "The assistant speaks first. Rules pick the message from the time of day, progress, goal and
-> lab results; AI only phrases it, with the rules text as a fallback."
+**Do**
 
-- Rings (calories outside, protein inside), streak badge, meal list, weekly wins.
-- Log one high protein meal by hand (e.g. "Paneer tikka", 600 kcal, 60 g protein) to hit the
-  goal: confetti, and the card turns to praise.
+- Turmeric + in the middle of the tab bar → Snap → choose the food photo.
+- Remove one item, make another portion bigger, point at the highlighted item → Save.
+- Rings move on Today. + → Speak → "two rotis, dal and a bowl of curd" → Done → save.
+- DevTools Network → Offline. + → Type it in → "Masala chai, 90 kcal" → save → "Waiting to sync".
+  Back online → it syncs.
 
-> "Wins are celebrated once a day. On the phone, reminders arrive at the times you usually eat,
-> and tapping one opens logging."
+**Say**
 
-## 2:20 – 2:50 · Health report reader
+- Logging is always one tap away, in the middle of the tab bar.
+- AI drafts the meal; totals are calculated in code; unsure items are flagged.
+- Voice: it listens first and only estimates from words it heard.
+- Logging works offline and syncs later; a double tap can't save twice.
 
-- **Health** tab → **PDF or photo** → `lab-report.pdf`. Show the reading state, then the green,
-  amber and red list. Open **LDL**: range bar, why it matters, one thing to try.
-- Back on **Today**: the focus areas now mention sugar and cholesterol.
+## 4 · Today, the assistant (1:45 – 2:20)
 
-> "The model only extracts what is printed. Units, status and advice are reviewed code, because
-> health advice should never be improvised."
+**Do**
 
-## 2:50 – 3:00 · One tech highlight and close
+- Point at the assistant card and its Why.
+- Rings, streak, meal list, weekly wins.
+- Type in "Paneer tikka", 600 kcal, 60 g protein → confetti, the card turns to praise.
 
-- Turn off the device toolbar so the window is wide, tap **+** → **Type it in**: the sheet
-  becomes a centred dialog.
+**Say**
 
-> "Bottom sheet on phones, dialog on wide screens, from one codebase. Services depend on an AI
-> provider interface, so Gemini is swappable and a mock runs the tests. The Android APK and the
-> code are linked in the README. Thanks."
+- The assistant speaks first; its message changes through the day.
+- Rules decide what to say, AI only phrases it, rules text as a fallback.
+- Wins are celebrated once a day; reminders on the phone come at your usual meal times.
+
+## 5 · Health report (2:20 – 2:50)
+
+**Do**
+
+- Health → PDF or photo → `lab-report.pdf`.
+- Green, amber, red list → open LDL.
+- Back to Today: focus areas now mention sugar and cholesterol.
+
+**Say**
+
+- AI only extracts what is printed.
+- Units, status and advice are reviewed code: health advice is never improvised.
+- Your lab results change what the app focuses on.
+
+## 6 · Close (2:50 – 3:00)
+
+**Do**
+
+- Turn off the device toolbar (wide window) → + → Type it in: a centred dialog.
+
+**Say**
+
+- Bottom sheet on phones, dialog on wide screens, one codebase.
+- The AI sits behind an interface, so it is swappable; a mock runs the tests.
+- APK and code are linked in the README. Thanks.
+
+---
+
+If an AI step shows "Katori is busy", tap Try again and mention it: that is the error handling
+working.
