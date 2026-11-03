@@ -95,9 +95,13 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
+    // Lets the input shrink in narrow rows so the unit suffix is never squeezed or cut off.
+    minWidth: 0,
+    // The field's own border already turns green on focus; drop the browser's second outline.
+    outlineWidth: 0,
     ...typography.heading,
     color: colors.textPrimary,
     paddingVertical: spacing.md,
   },
-  suffix: { marginLeft: spacing.sm },
+  suffix: { marginLeft: spacing.sm, flexShrink: 0 },
 });
