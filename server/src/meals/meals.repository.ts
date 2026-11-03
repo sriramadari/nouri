@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { isUniqueViolation } from '../database/prisma-errors.js';
 import { PrismaService } from '../database/prisma.service.js';
-import { Prisma, type Meal } from '../generated/prisma/client.js';
+import type { Meal } from '../generated/prisma/client.js';
 import type { MealSource } from '../generated/prisma/enums.js';
 import type { Nutrition } from './nutrition.js';
 import type { SavedMealItem } from './meals.schemas.js';
@@ -82,8 +83,4 @@ export class MealsRepository {
       orderBy: { eatenAt: 'asc' },
     });
   }
-}
-
-function isUniqueViolation(error: unknown): boolean {
-  return error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002';
 }
