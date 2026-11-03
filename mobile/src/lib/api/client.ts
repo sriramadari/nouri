@@ -4,6 +4,28 @@ import { ApiError } from './api-error';
 
 const DEFAULT_TIMEOUT_MS = 15_000;
 const RETRY_BASE_DELAY_MS = 600;
+/** A sleeping free tier server takes about 30 s to start; leave room for a slow network too. */
+const WAKE_TIMEOUT_MS = 60_000;
+
+let waking: Promise<void> | null = null;
+
+/**
+ * Wakes the server with one patient health check. The free hosting tier sleeps when idle and
+ * needs about 30 seconds to start, longer than a normal request timeout. While this runs,
+ * other requests wait for it instead of each timing out against a server that is booting.
+ * Resolves either way: if the server is really down, the real requests report it.
+ */
+export function wakeServer(): Promise<void> {
+  waking ??= send({ path: '/health', timeoutMs: WAKE_TIMEOUT_MS })
+    .then(
+      () => undefined,
+      () => undefined,
+    )
+    .finally(() => {
+      waking = null;
+    });
+  return waking;
+}
 
 export interface RequestOptions {
   method?: 'GET' | 'POST';
@@ -27,6 +49,7 @@ export interface RequestOptions {
  */
 export async function apiRequest<T>(options: RequestOptions): Promise<T> {
   const retries = options.retries ?? (options.method === 'POST' ? 0 : 2);
+  if (waking) await waking;
 
   for (let attempt = 0; ; attempt++) {
     try {

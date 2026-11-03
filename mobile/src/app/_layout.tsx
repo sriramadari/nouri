@@ -16,6 +16,7 @@ import { useMealSync } from '@/features/meals/meal-sync';
 import { useMealReminders } from '@/features/today/meal-reminders';
 import { useOnboardingDraft } from '@/features/onboarding/onboarding-draft';
 import { queryClient } from '@/lib/api/query-client';
+import { useWakeServer } from '@/lib/api/use-wake-server';
 import { useProfileStore } from '@/lib/storage/profile-store';
 import { createHydrationHook } from '@/lib/storage/use-hydrated';
 import { useProfileSync } from '@/lib/storage/use-profile-sync';
@@ -55,6 +56,7 @@ export default function RootLayout() {
  */
 function AppNavigator() {
   const hasProfile = useProfileStore((state) => state.profile !== null);
+  useWakeServer();
   useProfileSync();
   useMealSync();
   useMealReminders();
