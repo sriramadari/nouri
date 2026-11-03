@@ -27,7 +27,7 @@ Record on a phone mirror or the web app at phone width. Start on a fresh install
 
 ## 0:55 to 1:45, flow 2: log a meal by photo or voice
 
-- Tap **Snap** on the dark logging dock, photograph a plate. Show the skeleton chips, then the review sheet.
+- Tap the turmeric **+** in the middle of the tab bar, then the big **Snap** circle, photograph a plate. Show the skeleton chips, then the review sheet.
 - Remove one chip, tap another and press **+** to make it bigger; the total updates.
 
 > "The AI reads the photo; totals are summed in code. Doubtful items are highlighted for a quick

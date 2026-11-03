@@ -8,6 +8,7 @@ the maths, explains why it matters for _your_ goal and lab results, and reaches 
 
 <p>
   <img src="docs/screenshots/today.png" width="220" alt="Today screen with rings and the assistant card" />
+  <img src="docs/screenshots/log.png" width="220" alt="Log a meal screen with a big Snap button" />
   <img src="docs/screenshots/meal-review.png" width="220" alt="Meal review sheet with editable food chips" />
   <img src="docs/screenshots/health.png" width="220" alt="Health tab with colour coded lab results" />
 </p>
@@ -26,12 +27,12 @@ clear _why_, and nudges at the right moment.
 
 ## The four flows
 
-|     | Flow                                    | What it does                                                                                                                                                                                                                                              |
-| --- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | **Onboarding with a goal and a why**    | Five short cards (name, age and sex, height and weight with cm or ft/in, activity, goal) plus an optional blood report. Ends on **Your Plan**: calorie and protein targets, _how they were worked out_, and 2 or 3 focus areas, each with a one line why. |
-| 2   | **Log a meal by photo or voice** (hero) | **Snap** or **Speak** on Today. The AI returns food chips with portions in Indian units; the user removes, resizes (½× to 3×) or confirms doubtful items, then saves. Works offline.                                                                      |
-| 3   | **Today: the assistant comes to you**   | Rings showing what is left, an assistant card that changes through the day (always with a why), meal timeline, streak flame, weekly wins, confetti when the daily goal is hit, reminders at learned meal times.                                           |
-| 4   | **Health report reader**                | Upload a photo or PDF of a blood report. Markers are listed green, amber or red; each opens a sheet with where it sits in the healthy range, why it matters and one food action. Today's focus areas update automatically.                                |
+|     | Flow                                    | What it does                                                                                                                                                                                                                                                                                                                                          |
+| --- | --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | **Onboarding with a goal and a why**    | Five short cards (name, age and sex, height and weight with cm or ft/in, activity, goal) plus an optional blood report. Ends on **Your Plan**: calorie and protein targets, _how they were worked out_, and 2 or 3 focus areas, each with a one line why.                                                                                             |
+| 2   | **Log a meal by photo or voice** (hero) | The raised **+** in the middle of the tab bar opens one screen: a big **Snap** button, **Speak** under it, gallery and typing as fallbacks. After saving, Today opens so the rings visibly move. The AI returns food chips with portions in Indian units; the user removes, resizes (½× to 3×) or confirms doubtful items, then saves. Works offline. |
+| 3   | **Today: the assistant comes to you**   | Rings showing what is left, an assistant card that changes through the day (always with a why), meal timeline, streak flame, weekly wins, confetti when the daily goal is hit, reminders at learned meal times.                                                                                                                                       |
+| 4   | **Health report reader**                | Upload a photo or PDF of a blood report. Markers are listed green, amber or red; each opens a sheet with where it sits in the healthy range, why it matters and one food action. Today's focus areas update automatically.                                                                                                                            |
 
 <p>
   <img src="docs/screenshots/welcome.png" width="200" alt="Welcome screen with the Katori bowl mark" />
@@ -90,8 +91,11 @@ kitchen:
   what is left in the middle.
 - **An assistant with a face:** the bowl mark speaks on the assistant card, whose colour follows
   the day (turmeric morning, leaf afternoon, dusk evening) so a new check in is visible at a glance.
-- **One dock for logging:** Snap (turmeric) and Speak sit together on an ink panel with "From
-  gallery" and "Type it in" underneath, so all four ways to log are one glance away.
+- **Logging is the centre tab:** a raised turmeric **+** in the middle of the tab bar, under the
+  thumb on every main screen. It opens one screen with a big Snap circle (a photo gives the best
+  estimate for the least effort), Speak right under it, and "From gallery" and "Type it in" as
+  fallbacks. Meal reminders open this screen directly. Today stays a read of your day; on day
+  one its empty meal list has a "Log your first meal" button.
 - **Onboarding that feels like a conversation:** a welcome screen with three promises, then one
   serif question per step with a segmented progress bar, icons for goals and signal bars for
   activity level. The plan arrives as an ink card with the two numbers, the maths, then numbered
