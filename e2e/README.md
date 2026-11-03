@@ -4,13 +4,13 @@ End-to-end checks that drive the web build like a person would (click, type, pic
 against the real API and database. They use the Chrome DevTools Protocol directly through
 Node's built-in WebSocket, so there is nothing extra to install.
 
-| Suite | What it proves |
-| --- | --- |
-| `onboarding` | Validation messages, back keeps answers, ft/in toggle, plan numbers, restart opens Today, profile saved on the server |
-| `meals` | Offline logging shows "Waiting to sync" and syncs on reconnect; a double tap on Save stores one meal. With `MEAL_PHOTO`, also photo analysis, chip removal and portion changes |
-| `today` | Day one welcome, rings, streak flame, assistant message, goal celebration once per day |
-| `health` | Lab report upload, colour coded list, detail sheet, Today focus areas update |
-| `small` | No horizontal overflow at 320 px on every main screen |
+| Suite        | What it proves                                                                                                                                                                 |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `onboarding` | Validation messages, back keeps answers, ft/in toggle, plan numbers, restart opens Today, profile saved on the server                                                          |
+| `meals`      | Offline logging shows "Waiting to sync" and syncs on reconnect; a double tap on Save stores one meal. With `MEAL_PHOTO`, also photo analysis, chip removal and portion changes |
+| `today`      | Day one welcome, rings, streak flame, assistant message, goal celebration once per day                                                                                         |
+| `health`     | Lab report upload, colour coded list, detail sheet, Today focus areas update                                                                                                   |
+| `small`      | No horizontal overflow at 320 px on every main screen                                                                                                                          |
 
 ## Run
 
