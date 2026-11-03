@@ -37,6 +37,11 @@ export const streakQuerySchema = z.object({
   tzOffsetMinutes: z.coerce.number().int().min(-720).max(840).default(330),
 });
 
+export const summaryQuerySchema = streakQuerySchema.extend({
+  days: z.coerce.number().int().min(1).max(31).default(7),
+});
+
+export type SummaryQuery = z.infer<typeof summaryQuerySchema>;
 export type StreakQuery = z.infer<typeof streakQuerySchema>;
 export type SavedMealItem = z.infer<typeof savedMealItemSchema>;
 export type CreateMealInput = z.infer<typeof createMealSchema>;

@@ -151,3 +151,22 @@ describe('startOfLocalDay', () => {
     expect(startOfLocalDay('2026-11-02', -300).toISOString()).toBe('2026-11-02T05:00:00.000Z');
   });
 });
+
+describe('MealsService.summary', () => {
+  it('returns every day of the window, oldest first, with empty days as zeros', async () => {
+    const sumByDay = vi
+      .fn()
+      .mockResolvedValue([{ date: '2026-11-02', meals: 2, calories: 1500, proteinG: 70 }]);
+    const meals = new MealsService(new MockProvider(), { sumByDay } as unknown as MealsRepository);
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-11-03T06:00:00Z')); // 11:30 in India
+
+    const { days } = await meals.summary(user, { days: 3, tzOffsetMinutes: 330 });
+
+    expect(days.map((day) => day.date)).toEqual(['2026-11-01', '2026-11-02', '2026-11-03']);
+    expect(days[1]).toMatchObject({ meals: 2, calories: 1500 });
+    expect(days[2]).toMatchObject({ meals: 0, calories: 0 });
+    expect(sumByDay).toHaveBeenCalledWith('user-1', new Date('2026-10-31T18:30:00.000Z'), 330);
+    vi.useRealTimers();
+  });
+});

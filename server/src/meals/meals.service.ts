@@ -12,8 +12,13 @@ import {
   toDraftItem,
   toMealResponse,
 } from './meal.response.js';
-import { MealsRepository } from './meals.repository.js';
-import type { CreateMealInput, ListMealsQuery, StreakQuery } from './meals.schemas.js';
+import { type DayTotals, MealsRepository } from './meals.repository.js';
+import type {
+  CreateMealInput,
+  ListMealsQuery,
+  StreakQuery,
+  SummaryQuery,
+} from './meals.schemas.js';
 import { overallConfidence, sumNutrition } from './nutrition.js';
 import { computeStreak, type Streak } from './streak.js';
 
@@ -64,6 +69,28 @@ export class MealsService {
   async streak(user: User, query: StreakQuery): Promise<Streak> {
     const days = await this.meals.findLoggedDays(user.id, query.tzOffsetMinutes);
     return computeStreak(days, localToday(query.tzOffsetMinutes));
+  }
+
+  /**
+   * Totals for each of the last `days` local days, oldest first, with empty days filled in
+   * as zeros so the app can show a full week.
+   */
+  async summary(user: User, query: SummaryQuery): Promise<{ days: DayTotals[] }> {
+    const today = localToday(query.tzOffsetMinutes);
+    const dates = Array.from({ length: query.days }, (_, i) =>
+      new Date(Date.parse(`${today}T00:00:00Z`) - (query.days - 1 - i) * DAY_MS)
+        .toISOString()
+        .slice(0, 10),
+    );
+    const totals = await this.meals.sumByDay(
+      user.id,
+      startOfLocalDay(dates[0]!, query.tzOffsetMinutes),
+      query.tzOffsetMinutes,
+    );
+    const byDate = new Map(totals.map((day) => [day.date, day]));
+    return {
+      days: dates.map((date) => byDate.get(date) ?? { date, meals: 0, calories: 0, proteinG: 0 }),
+    };
   }
 
   /** Meals for one local calendar day, with the day's totals. */

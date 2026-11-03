@@ -29,7 +29,10 @@ import {
   listMealsQuerySchema,
   type StreakQuery,
   streakQuerySchema,
+  type SummaryQuery,
+  summaryQuerySchema,
 } from './meals.schemas.js';
+import type { DayTotals } from './meals.repository.js';
 import type { Streak } from './streak.js';
 import { MealsService } from './meals.service.js';
 
@@ -56,6 +59,15 @@ export class MealsController {
     @Body(new ZodValidationPipe(createMealSchema)) body: CreateMealInput,
   ): Promise<MealResponse> {
     return this.mealsService.save(user, body);
+  }
+
+  /** Per day totals for the weekly wins card. */
+  @Get('summary')
+  summary(
+    @CurrentUser() user: User,
+    @Query(new ZodValidationPipe(summaryQuerySchema)) query: SummaryQuery,
+  ): Promise<{ days: DayTotals[] }> {
+    return this.mealsService.summary(user, query);
   }
 
   @Get('streak')
