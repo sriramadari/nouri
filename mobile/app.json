@@ -21,7 +21,12 @@
       },
       "predictiveBackGestureEnabled": false,
       "package": "app.katori.mobile",
-      "versionCode": 1
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
+      ]
     },
     "web": {
       "output": "single",
@@ -76,6 +81,16 @@
       "typedRoutes": true,
       "reactCompiler": true
     },
-    "description": "Eat well, know why. Snap or speak your meals; Katori tracks, explains and nudges."
+    "description": "Eat well, know why. Snap or speak your meals; Katori tracks, explains and nudges.",
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "563a44c4-8587-489f-9326-ef5dcc53978c"
+      }
+    }
   }
 }
