@@ -1,31 +1,41 @@
 /**
  * Colour tokens. Components read colours from here and never hard code them.
- * Light, calm and warm: off white background, soft green primary, warm accent for
- * celebrations, clear status colours for lab results. Text and button colours meet
- * WCAG AA contrast on the background.
+ *
+ * The palette comes from an Indian kitchen rather than a fitness app: warm paper, ink for
+ * text and main buttons, turmeric (haldi) as the brand colour and curry leaf green for
+ * protein. Status colours for lab results stay the familiar green, amber and red. Text and
+ * button colours meet WCAG AA contrast on the background.
  */
 export const colors = {
-  background: '#FAF8F4',
+  background: '#FBF7F0',
   surface: '#FFFFFF',
-  surfaceMuted: '#F3F0EA',
-  border: '#E6E1D8',
-  overlay: 'rgba(31, 42, 36, 0.35)',
+  surfaceMuted: '#F4EEE4',
+  border: '#E9E1D3',
+  overlay: 'rgba(34, 28, 23, 0.4)',
 
-  textPrimary: '#1F2A24',
-  textSecondary: '#55645C',
-  textMuted: '#7D8A83',
-  textOnPrimary: '#FFFFFF',
+  textPrimary: '#221C17',
+  textSecondary: '#5F554B',
+  textMuted: '#8C8175',
+  textOnPrimary: '#FFF9F0',
+  /** Secondary text on ink surfaces such as the logging dock. */
+  textOnPrimaryMuted: '#C9BEB0',
 
-  /** Buttons and links. Deep enough for white text on top. */
-  primary: '#2F7D57',
-  primaryPressed: '#256848',
-  /** Lighter green for rings, highlights and selected states. */
-  primarySoft: '#5FAE85',
-  primaryTint: '#E4F1E9',
+  /** Main buttons, selected states and links: ink, so turmeric can stay a highlight. */
+  primary: '#221C17',
+  primaryPressed: '#3A3129',
+  /** Turmeric: the brand colour, the calorie ring and the assistant's mark. */
+  brand: '#E39B2D',
+  brandTint: '#FCEFD8',
+  /** Darker turmeric that is readable as text on paper. */
+  brandText: '#9A5F0A',
 
-  /** Warm accent for celebrations, streaks and the protein ring. */
-  accent: '#E8894A',
-  accentTint: '#FCEBDD',
+  /** Curry leaf green: the protein ring and positive progress. */
+  leaf: '#3F8A5A',
+  leafTint: '#E3F1E6',
+
+  /** Evening tint for the assistant card. */
+  dusk: '#5B5A9A',
+  duskTint: '#ECEBF7',
 
   success: '#2F8A5B',
   successTint: '#E2F3E9',
@@ -35,8 +45,8 @@ export const colors = {
   dangerTint: '#FBE4E1',
 
   /** Track behind progress rings. */
-  ringTrack: '#ECE7DE',
-  skeleton: '#ECE8E1',
+  ringTrack: '#F0E8DA',
+  skeleton: '#EEE7DB',
 } as const;
 
 export type ColorToken = keyof typeof colors;

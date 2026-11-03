@@ -14,7 +14,7 @@ export function StreakBadge({ streak }: { streak: Streak }) {
 
   return (
     <View
-      style={[styles.badge, { backgroundColor: lit ? colors.accentTint : colors.surfaceMuted }]}
+      style={[styles.badge, { backgroundColor: lit ? colors.brandTint : colors.surfaceMuted }]}
       accessible
       accessibilityLabel={
         streak.current === 0
@@ -22,7 +22,7 @@ export function StreakBadge({ streak }: { streak: Streak }) {
           : `${streak.current} day streak${lit ? '' : '. Log a meal today to keep it.'} Best ${streak.best} days.`
       }
     >
-      <Icon name="flame" size={16} color={lit ? 'accent' : 'textMuted'} />
+      <Icon name="flame" size={16} color={lit ? 'brand' : 'textMuted'} />
       <Text variant="label" color={lit ? 'textPrimary' : 'textSecondary'}>
         {label}
       </Text>

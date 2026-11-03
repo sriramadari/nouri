@@ -22,7 +22,7 @@ export function DayRings({ eaten, targets }: { eaten: Nutrition; targets: Target
           max={targets.calories}
           size={compact ? 128 : 150}
           strokeWidth={compact ? 12 : 14}
-          color={caloriesLeft < 0 ? 'warning' : 'primarySoft'}
+          color={caloriesLeft < 0 ? 'warning' : 'brand'}
           accessibilityLabel={`${kcal(eaten.calories)} of ${kcal(targets.calories)} calories eaten`}
         >
           <Text variant="title">{kcal(Math.abs(caloriesLeft))}</Text>
@@ -35,7 +35,7 @@ export function DayRings({ eaten, targets }: { eaten: Nutrition; targets: Target
           max={targets.proteinG}
           size={compact ? 96 : 112}
           strokeWidth={compact ? 9 : 11}
-          color="accent"
+          color="leaf"
           accessibilityLabel={`${Math.round(eaten.proteinG)} of ${targets.proteinG} grams of protein`}
         >
           <Text variant="heading">{proteinLeft > 0 ? `${proteinLeft} g` : 'Done'}</Text>

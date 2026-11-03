@@ -88,7 +88,7 @@ export function TodayScreen() {
         <MealLogger />
 
         {goalHit ? (
-          <Card tone="accentTint">
+          <Card tone="leafTint">
             <Text variant="heading">Goal hit today</Text>
             <Text color="textSecondary">
               {targets.proteinG} g protein reached within your calories. That’s how habits stick.

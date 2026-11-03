@@ -75,22 +75,22 @@ function BiomarkerDetail({ marker }: { marker: Biomarker }) {
       </Text>
 
       {inRange ? (
-        <Card tone="primaryTint">
+        <Card tone="leafTint">
           <Text>In a healthy range. Keep doing what you’re doing.</Text>
         </Card>
       ) : (
         <>
           {marker.why ? (
             <View style={styles.block}>
-              <Text variant="label" color="textSecondary">
+              <Text variant="eyebrow" color="textSecondary">
                 WHY IT MATTERS
               </Text>
               <Text>{marker.why}</Text>
             </View>
           ) : null}
           {marker.action ? (
-            <Card tone="accentTint">
-              <Text variant="label" color="textSecondary">
+            <Card tone="brandTint">
+              <Text variant="eyebrow" color="textSecondary">
                 ONE THING TO TRY
               </Text>
               <Text variant="bodyStrong">{marker.action}</Text>

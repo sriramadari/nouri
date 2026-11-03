@@ -1,4 +1,5 @@
 export { AdaptiveSheet, type AdaptiveSheetProps } from './AdaptiveSheet';
+export { BrandMark } from './BrandMark';
 export { Button, type ButtonProps } from './Button';
 export { Card, type CardProps } from './Card';
 export { Chip, type ChipProps } from './Chip';

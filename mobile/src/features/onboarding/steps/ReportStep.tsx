@@ -36,7 +36,7 @@ export function ReportStep() {
         continueLabel="Reading…"
         continueLoading
       >
-        <Card tone="primaryTint" style={styles.reading}>
+        <Card tone="brandTint" style={styles.reading}>
           <Icon name="file" size={32} color="primary" />
           <Text color="textSecondary" align="center">
             Hang tight, it’s worth it.

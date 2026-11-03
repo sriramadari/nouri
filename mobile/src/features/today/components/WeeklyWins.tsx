@@ -18,8 +18,8 @@ export function WeeklyWins({ targets }: { targets: Targets }) {
   return (
     <Card accessible accessibilityLabel={`This week. ${wins.headline}`}>
       <View style={styles.title}>
-        <Icon name="sparkles" size={18} color="accent" />
-        <Text variant="label" color="textSecondary">
+        <Icon name="sparkles" size={18} color="brand" />
+        <Text variant="eyebrow" color="textSecondary">
           THIS WEEK
         </Text>
       </View>
@@ -30,7 +30,7 @@ export function WeeklyWins({ targets }: { targets: Targets }) {
             key={day.date}
             style={[
               styles.day,
-              { backgroundColor: day.meals > 0 ? colors.primarySoft : colors.ringTrack },
+              { backgroundColor: day.meals > 0 ? colors.leaf : colors.ringTrack },
             ]}
           />
         ))}

@@ -5,13 +5,15 @@ import { colors, type ColorToken, MIN_TAP_TARGET, radii, spacing } from '@/theme
 import { Icon, type IconName } from './Icon';
 import { Text } from './Text';
 
-type Variant = 'primary' | 'secondary' | 'ghost';
+type Variant = 'primary' | 'brand' | 'secondary' | 'ghost';
 
 const VARIANTS: Record<
   Variant,
   { background: ColorToken; pressed: ColorToken; text: ColorToken; border?: ColorToken }
 > = {
   primary: { background: 'primary', pressed: 'primaryPressed', text: 'textOnPrimary' },
+  /** Turmeric, for the one hero action on a dark surface (Snap). */
+  brand: { background: 'brand', pressed: 'brandText', text: 'textPrimary' },
   secondary: { background: 'surface', pressed: 'surfaceMuted', text: 'primary', border: 'border' },
   ghost: { background: 'background', pressed: 'surfaceMuted', text: 'primary' },
 };
@@ -71,7 +73,7 @@ export function Button({
 
 const styles = StyleSheet.create({
   base: {
-    minHeight: MIN_TAP_TARGET,
+    minHeight: MIN_TAP_TARGET + 4,
     paddingHorizontal: spacing.xl,
     borderRadius: radii.pill,
     borderWidth: 1,

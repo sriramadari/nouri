@@ -102,7 +102,7 @@ export function MealReview({ meal, onChange, saveError }: MealReviewProps) {
         <Button label="Add a food" icon="plus" variant="ghost" onPress={() => setAdding(true)} />
       )}
 
-      <Card tone="primaryTint" style={styles.totals} accessible>
+      <Card tone="brandTint" style={styles.totals} accessible>
         <Total label="Calories" value={`${totals.calories}`} unit="kcal" />
         <Total label="Protein" value={`${Math.round(totals.proteinG)}`} unit="g" />
         <Total label="Carbs" value={`${Math.round(totals.carbsG)}`} unit="g" />

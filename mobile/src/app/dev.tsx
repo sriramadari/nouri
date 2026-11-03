@@ -139,7 +139,7 @@ function DevGallery() {
           max={80}
           size={110}
           strokeWidth={10}
-          color="accent"
+          color="brand"
           accessibilityLabel="42 of 80 grams protein"
         >
           <Text variant="heading">38 g</Text>
@@ -167,7 +167,7 @@ function DevGallery() {
       </View>
 
       <Text variant="title">Cards and loading</Text>
-      <Card tone="primaryTint">
+      <Card tone="leafTint">
         <Text variant="bodyStrong">Katori noticed you’re low on protein today</Text>
         <Text color="textSecondary">A katori of dal or curd at dinner closes the gap.</Text>
       </Card>

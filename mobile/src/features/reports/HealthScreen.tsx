@@ -204,7 +204,7 @@ function LatestReport({
 
   return (
     <View style={styles.list}>
-      <Card tone={flagged > 0 ? 'accentTint' : 'primaryTint'}>
+      <Card tone={flagged > 0 ? 'brandTint' : 'leafTint'}>
         <Text variant="heading">
           {flagged > 0
             ? `${flagged} of ${report.biomarkers.length} results need attention`

@@ -1,6 +1,9 @@
+import { Fraunces_600SemiBold } from '@expo-google-fonts/fraunces/600SemiBold';
+import { Fraunces_700Bold } from '@expo-google-fonts/fraunces/700Bold';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { type ErrorBoundaryProps, Stack } from 'expo-router';
+import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
@@ -18,13 +21,16 @@ import { createHydrationHook } from '@/lib/storage/use-hydrated';
 import { useProfileSync } from '@/lib/storage/use-profile-sync';
 import { colors } from '@/theme';
 
-// Keep the splash screen up until saved data has loaded, so nothing flickers.
+// Keep the splash screen up until saved data and fonts have loaded, so nothing flickers.
 SplashScreen.preventAutoHideAsync().catch(() => undefined);
 
 const useStoresHydrated = createHydrationHook(useProfileStore, useOnboardingDraft);
 
 export default function RootLayout() {
-  const hydrated = useStoresHydrated();
+  const storesHydrated = useStoresHydrated();
+  // A font that fails to load falls back to the system font rather than blocking the app.
+  const [fontsLoaded, fontError] = useFonts({ Fraunces_600SemiBold, Fraunces_700Bold });
+  const hydrated = storesHydrated && (fontsLoaded || fontError !== null);
 
   useEffect(() => {
     if (hydrated) SplashScreen.hideAsync().catch(() => undefined);

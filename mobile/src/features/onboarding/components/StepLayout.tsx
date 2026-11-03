@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.ringTrack,
     overflow: 'hidden',
   },
-  progressFill: { height: '100%', borderRadius: radii.pill, backgroundColor: colors.primarySoft },
+  progressFill: { height: '100%', borderRadius: radii.pill, backgroundColor: colors.brand },
   counter: { minWidth: 56, textAlign: 'right', paddingRight: spacing.sm },
   body: { padding: spacing.lg, gap: spacing.sm, flexGrow: 1 },
   content: { marginTop: spacing.lg, gap: spacing.md },

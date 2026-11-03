@@ -13,13 +13,7 @@ import { colors } from '@/theme';
 
 const PIECES = 36;
 const DURATION_MS = 2600;
-const PALETTE = [
-  colors.accent,
-  colors.primarySoft,
-  colors.warning,
-  colors.primary,
-  colors.accentTint,
-];
+const PALETTE = [colors.brand, colors.leaf, colors.danger, colors.dusk, colors.brandTint];
 
 interface ConfettiProps {
   /** Starts a burst each time this changes to a new value. */

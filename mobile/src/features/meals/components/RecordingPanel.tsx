@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: radii.pill,
-    backgroundColor: colors.accent,
+    backgroundColor: colors.brand,
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: spacing.md,

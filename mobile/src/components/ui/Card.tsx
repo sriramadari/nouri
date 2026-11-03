@@ -5,7 +5,13 @@ import { cardShadow, colors, type ColorToken, radii, spacing } from '@/theme';
 export interface CardProps extends ViewProps {
   tone?: Extract<
     ColorToken,
-    'surface' | 'primaryTint' | 'accentTint' | 'warningTint' | 'dangerTint'
+    | 'surface'
+    | 'surfaceMuted'
+    | 'leafTint'
+    | 'brandTint'
+    | 'duskTint'
+    | 'warningTint'
+    | 'dangerTint'
   >;
 }
 
@@ -16,6 +22,8 @@ export function Card({ tone = 'surface', style, ...props }: CardProps) {
 const styles = StyleSheet.create({
   card: {
     borderRadius: radii.lg,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
     padding: spacing.lg,
     gap: spacing.sm,
     ...cardShadow,

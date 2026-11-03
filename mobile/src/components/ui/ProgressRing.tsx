@@ -36,7 +36,7 @@ export function ProgressRing({
   max,
   size = 160,
   strokeWidth = 14,
-  color = 'primarySoft',
+  color = 'brand',
   children,
   accessibilityLabel,
 }: ProgressRingProps) {

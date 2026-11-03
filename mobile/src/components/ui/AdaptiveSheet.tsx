@@ -178,8 +178,8 @@ function SheetHeader({ title, onClose }: { title: string; onClose: () => void })
 const styles = StyleSheet.create({
   sheetBackground: {
     backgroundColor: colors.surface,
-    borderTopLeftRadius: radii.lg,
-    borderTopRightRadius: radii.lg,
+    borderTopLeftRadius: radii.xl,
+    borderTopRightRadius: radii.xl,
   },
   handle: { backgroundColor: colors.border, width: 40 },
   body: { padding: spacing.lg, gap: spacing.lg },

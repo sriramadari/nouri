@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { colors, MIN_TAP_TARGET, radii, spacing } from '@/theme';
@@ -10,10 +11,12 @@ export interface OptionCardProps {
   description?: string;
   selected: boolean;
   onPress: () => void;
+  /** Optional picture on the left, e.g. a goal icon, so options can be told apart at a glance. */
+  leading?: ReactNode;
 }
 
 /** One choice in a single choice list, with a large tap target and a clear selected state. */
-export function OptionCard({ title, description, selected, onPress }: OptionCardProps) {
+export function OptionCard({ title, description, selected, onPress, leading }: OptionCardProps) {
   return (
     <Pressable
       onPress={onPress}
@@ -25,13 +28,16 @@ export function OptionCard({ title, description, selected, onPress }: OptionCard
         {
           borderColor: selected ? colors.primary : colors.border,
           backgroundColor: selected
-            ? colors.primaryTint
+            ? colors.brandTint
             : pressed
               ? colors.surfaceMuted
               : colors.surface,
         },
       ]}
     >
+      {leading ? (
+        <View style={[styles.leading, selected && styles.leadingSelected]}>{leading}</View>
+      ) : null}
       <View style={styles.text}>
         <Text variant="bodyStrong">{title}</Text>
         {description ? (
@@ -55,10 +61,19 @@ const styles = StyleSheet.create({
     minHeight: MIN_TAP_TARGET + 16,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
-    borderRadius: radii.md,
+    borderRadius: radii.lg,
     borderWidth: 1.5,
   },
   text: { flex: 1, gap: spacing.xxs },
+  leading: {
+    width: 44,
+    height: 44,
+    borderRadius: radii.md,
+    backgroundColor: colors.surfaceMuted,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  leadingSelected: { backgroundColor: colors.surface },
   radio: {
     width: 24,
     height: 24,

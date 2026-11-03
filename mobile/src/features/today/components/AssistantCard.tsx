@@ -13,12 +13,12 @@ interface AssistantCardProps {
 export function AssistantCard({ message, why, tone }: AssistantCardProps) {
   return (
     <Card
-      tone={tone === 'praise' ? 'primaryTint' : 'accentTint'}
+      tone={tone === 'praise' ? 'leafTint' : 'brandTint'}
       accessibilityRole="summary"
       accessibilityLabel={`Katori says: ${message}. ${why}`}
     >
       <View style={styles.label}>
-        <Icon name="sparkles" size={16} color={tone === 'praise' ? 'primary' : 'accent'} />
+        <Icon name="sparkles" size={16} color={tone === 'praise' ? 'primary' : 'brand'} />
         <Text variant="label" color={tone === 'praise' ? 'primary' : 'textSecondary'}>
           KATORI
         </Text>

@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { StyleSheet, TextInput, type TextInputProps, View } from 'react-native';
 
-import { colors, MIN_TAP_TARGET, radii, spacing, typography } from '@/theme';
+import { colors, MIN_TAP_TARGET, radii, spacing } from '@/theme';
 
 import { Text } from './Text';
 
@@ -97,9 +97,11 @@ const styles = StyleSheet.create({
     flex: 1,
     // Lets the input shrink in narrow rows so the unit suffix is never squeezed or cut off.
     minWidth: 0,
-    // The field's own border already turns green on focus; drop the browser's second outline.
+    // The field's own border already darkens on focus; drop the browser's second outline.
     outlineWidth: 0,
-    ...typography.heading,
+    // Bold system font: easy to read while typing, and the serif stays for headlines.
+    fontSize: 18,
+    fontWeight: '600',
     color: colors.textPrimary,
     paddingVertical: spacing.md,
   },
