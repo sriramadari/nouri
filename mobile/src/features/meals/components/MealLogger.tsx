@@ -83,15 +83,26 @@ export function MealLogger({ onSaved }: { onSaved?: () => void }) {
   };
 
   const snap = async (from: 'camera' | 'library') => {
-    const result = await capturePhoto(from, 'meal.jpg');
-    if (result.status === 'denied') setFlow({ step: 'denied', what: 'camera' });
-    if (result.status === 'picked') await analyze('PHOTO', result.file);
+    try {
+      const result = await capturePhoto(from, 'meal.jpg');
+      if (result.status === 'denied') setFlow({ step: 'denied', what: 'camera' });
+      if (result.status === 'picked') await analyze('PHOTO', result.file);
+    } catch {
+      // A camera that fails to open must still leave the person a way forward.
+      setFlow({ step: 'failed', source: 'PHOTO', error: deviceError('camera') });
+    }
   };
 
   const speak = async () => {
     haptics.tap();
     setFlow({ step: 'recording' });
-    if ((await voice.start()) === 'denied') setFlow({ step: 'denied', what: 'microphone' });
+    try {
+      if ((await voice.start()) === 'denied') setFlow({ step: 'denied', what: 'microphone' });
+    } catch {
+      // e.g. the microphone is busy in a call or another app; never leave a silent screen.
+      voice.cancel().catch(() => undefined);
+      setFlow({ step: 'failed', source: 'VOICE', error: deviceError('microphone') });
+    }
   };
 
   const stopping = useRef(false);
@@ -262,7 +273,17 @@ export function MealLogger({ onSaved }: { onSaved?: () => void }) {
   );
 }
 
+/** The phone could not start the camera or microphone (not a network or AI problem). */
+function deviceError(what: 'camera' | 'microphone'): ApiError {
+  return new ApiError(
+    0,
+    'DEVICE_UNAVAILABLE',
+    `The ${what} couldn’t start. Close other apps that may be using it and try again, or type the meal in.`,
+  );
+}
+
 const FAILURE_TITLES: Record<string, string> = {
+  DEVICE_UNAVAILABLE: 'Couldn’t start',
   MEAL_NOT_RECOGNIZED: 'Couldn’t see the food',
   VOICE_NOT_UNDERSTOOD: 'Didn’t catch that',
   AI_TIMEOUT: 'That took too long',

@@ -21,12 +21,7 @@
       },
       "predictiveBackGestureEnabled": false,
       "package": "app.katori.mobile",
-      "versionCode": 1,
-      "permissions": [
-        "android.permission.MODIFY_AUDIO_SETTINGS",
-        "android.permission.FOREGROUND_SERVICE",
-        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
-      ]
+      "versionCode": 1
     },
     "web": {
       "output": "single",
@@ -42,21 +37,19 @@
           "imageWidth": 140
         }
       ],
-      "expo-audio",
-      "expo-build-properties",
       [
         "expo-image-picker",
         {
           "cameraPermission": "Katori uses the camera to snap your meals and lab reports.",
-          "photosPermission": "Katori reads the meal or report photo you choose.",
-          "microphonePermission": false
+          "photosPermission": "Katori reads the meal or report photo you choose."
         }
       ],
       [
         "expo-audio",
         {
           "microphonePermission": "Katori listens to short voice notes about what you ate.",
-          "recordAudioAndroid": true
+          "recordAudioAndroid": true,
+          "enableBackgroundPlayback": false
         }
       ],
       [
