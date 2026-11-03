@@ -21,8 +21,8 @@ Checked against the user testing checklist in the build guide.
   blocked by an image picker setting, the native bottom sheet library never opened on React
   Native 0.88, and Expo's fetch rejected the classic file upload format. All three are fixed
   and were checked on an Android emulator in Expo Go (sheets, microphone prompt, camera denied
-  path, saving) and on a real phone.
+  path, saving, the upload reaching the server); sheets were also confirmed on a real phone.
 - The emulator cannot hear real speech, so voice was proven with recorded speech sent to the
-  production API (about 2 seconds through Groq) and on a real phone.
+  production API (about 2 seconds through Groq).
 - Photos and reports still use Gemini's free tier, which allows about 20 requests per model per
   day and is slow when busy; voice moved to Groq's free tier for that reason.
