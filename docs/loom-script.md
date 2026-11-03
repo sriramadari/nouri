@@ -10,19 +10,24 @@ Record on a phone mirror or the web app at phone width. Start on a fresh install
 
 ## 0:20 to 0:55, flow 1: onboarding with a goal and a why
 
+- Open on the welcome screen: the bowl mark, "Eat well, know why." and three promises.
+
+> "It's called Katori, after the small bowl Indian portions are measured in. Turmeric, ink and a
+> serif, because most health apps look like the same mint green spreadsheet."
+
 - Type a name, show the friendly error on an empty field, enter age, sex, height (flip to ft/in),
   activity and the goal "Lose weight". Skip the report.
 
 > "Five short cards, answers survive going back or closing the app."
 
-- On **Your Plan**, point at the two numbers and "How Katori worked this out".
+- On **Your Plan**, point at the ink card with the two numbers and "How Katori worked this out".
 
 > "The targets are deterministic, Mifflin St Jeor times activity minus 500, and the app shows its
 > maths. Each focus area comes with a one line why."
 
 ## 0:55 to 1:45, flow 2: log a meal by photo or voice
 
-- Tap **Snap**, photograph a plate. Show the skeleton chips, then the review sheet.
+- Tap **Snap** on the dark logging dock, photograph a plate. Show the skeleton chips, then the review sheet.
 - Remove one chip, tap another and press **+** to make it bigger; the total updates.
 
 > "The AI reads the photo; totals are summed in code. Doubtful items are highlighted for a quick
@@ -34,7 +39,7 @@ Record on a phone mirror or the web app at phone width. Start on a fresh install
 > "Voice listens first, then estimates only from words it heard. Silence is rejected instead of
 > turned into a made up meal."
 
-- Turn on airplane mode, **Add by hand** "Masala chai, 90 kcal", save: "Waiting to sync". Turn it
+- Turn on airplane mode, **Type it in** "Masala chai, 90 kcal", save: "Waiting to sync". Turn it
   off: it syncs.
 
 ## 1:45 to 2:25, flow 3: Today

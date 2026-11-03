@@ -34,6 +34,7 @@ clear _why_, and nudges at the right moment.
 | 4   | **Health report reader**                | Upload a photo or PDF of a blood report. Markers are listed green, amber or red; each opens a sheet with where it sits in the healthy range, why it matters and one food action. Today's focus areas update automatically.                                |
 
 <p>
+  <img src="docs/screenshots/welcome.png" width="200" alt="Welcome screen with the Katori bowl mark" />
   <img src="docs/screenshots/onboarding.png" width="200" alt="Onboarding card" />
   <img src="docs/screenshots/plan.png" width="200" alt="Your Plan screen" />
   <img src="docs/screenshots/goal-hit.png" width="200" alt="Goal hit celebration" />
@@ -72,6 +73,29 @@ On tablets and desktop web the same sheets become centred dialogs:
   fresh", and wins get confetti once, not every time.
 - **Honest copy.** The report step says the file is read by AI and then discarded; lab sheets say
   "guidance, not a diagnosis".
+
+### Design direction
+
+Most health apps are white, mint green and a sans serif, and they all blur together. Katori is
+named after the small bowl Indian portions are measured in, and the look comes from the same
+kitchen:
+
+- **Palette:** warm paper background, ink for text and main buttons, turmeric as the brand colour
+  (calorie ring, highlights) and curry leaf green for protein. Lab statuses keep the familiar green,
+  amber and red, because those must read instantly. Light only, every pair checked for AA contrast.
+- **Type:** Fraunces, a warm serif, for headlines and the big numbers, so the app reads like a
+  friendly food column instead of a spreadsheet. Body text stays on the system font (two font
+  weights, about 70 KB each, are the only additions).
+- **Today's katori:** calories and protein are nested rings, like a bowl seen from above, with
+  what is left in the middle.
+- **An assistant with a face:** the bowl mark speaks on the assistant card, whose colour follows
+  the day (turmeric morning, leaf afternoon, dusk evening) so a new check in is visible at a glance.
+- **One dock for logging:** Snap (turmeric) and Speak sit together on an ink panel with "From
+  gallery" and "Type it in" underneath, so all four ways to log are one glance away.
+- **Onboarding that feels like a conversation:** a welcome screen with three promises, then one
+  serif question per step with a segmented progress bar, icons for goals and signal bars for
+  activity level. The plan arrives as an ink card with the two numbers, the maths, then numbered
+  focus areas.
 
 ## Architecture
 
