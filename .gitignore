@@ -21,3 +21,6 @@ web-build/
 # OS and editor
 .DS_Store
 *.log
+
+# Browser test output
+e2e/.work/
