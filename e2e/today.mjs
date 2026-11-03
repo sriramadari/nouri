@@ -11,8 +11,11 @@ const page = await launch({
 });
 const step = (msg) => console.log('✓', msg);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+/** The assistant card reads "Katori", then the moment of the day, then the message. */
+const assistantSays = (text) =>
+  text.match(/Katori\n(?:Morning check in|Afternoon nudge|Evening recap|Well done)\n([^\n]+)/)[1];
 const addByHand = async (food, kcal, protein) => {
-  await page.click('Add by hand');
+  await page.click('Type it in');
   await page.type('Food', food);
   await page.type('Calories', String(kcal));
   await page.type('Protein (optional)', String(protein));
@@ -25,9 +28,9 @@ try {
   await page.goto(BASE + '/');
   await onboard(page, 'Kiran');
   await page.waitForText('Start a streak');
-  await page.waitForText('KATORI');
+  await page.waitForText('What did you eat?');
   const day1 = await page.text();
-  step(`assistant card on day one: "${day1.match(/KATORI\n([^\n]+)/)[1]}"`);
+  step(`assistant card on day one: "${assistantSays(day1)}"`);
   if (!day1.includes('Start a streak')) throw new Error('Expected an unlit streak badge');
   if (!day1.includes('1,850') || !day1.includes('kcal left')) throw new Error('Rings missing');
   step('rings show 1,850 kcal left and 95 g protein to go; streak badge says "Start a streak"');
@@ -38,9 +41,9 @@ try {
   step('first meal lights the streak flame (1-day streak)');
   const mid = await page.text();
   step(
-    `rings updated: ${mid.match(/[\d,]+\nkcal left/)[0].replace('\n', ' ')}, ${mid.match(/\d+ g\nprotein to go/)[0].replace('\n', ' ')}`,
+    `rings updated: ${mid.match(/[\d,]+\nkcal left/)[0].replace('\n', ' ')}, ${mid.match(/\d+ g to go/)[0]} protein`,
   );
-  step(`assistant now says: "${mid.match(/KATORI\n([^\n]+)/)[1]}"`);
+  step(`assistant now says: "${assistantSays(mid)}"`);
 
   await addByHand('Dal rice and curd', 650, 42);
   await page.waitForText('Goal hit today');

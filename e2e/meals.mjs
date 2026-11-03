@@ -53,7 +53,7 @@ try {
     // --- Photo ---
     chooserFile = process.env.MEAL_PHOTO;
     t = Date.now();
-    await page.click('Choose a photo');
+    await page.click('From gallery');
     await page.waitForText('Katori is looking at your plate', 15000);
     step('analyzing state with skeleton chips');
     await page.waitForText('Check your meal', 120000);
@@ -115,7 +115,7 @@ try {
     downloadThroughput: -1,
     uploadThroughput: -1,
   });
-  await page.click('Add by hand');
+  await page.click('Type it in');
   await page.type('Food', 'Masala chai');
   await page.type('Calories', '90');
   await page.type('Protein (optional)', '3');
@@ -137,7 +137,7 @@ try {
   step('back online: the queued meal synced automatically');
 
   // --- Double tap on Save ---
-  await page.click('Add by hand');
+  await page.click('Type it in');
   await page.type('Food', 'Banana');
   await page.type('Calories', '105');
   await page.click('Add food');

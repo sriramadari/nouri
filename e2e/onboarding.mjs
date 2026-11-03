@@ -6,8 +6,13 @@ const page = await launch({ profileDir: `${S}/e2e-profile`, width: 500, height: 
 const step = (msg) => console.log('✓', msg);
 try {
   await page.goto(BASE + '/');
-  await page.waitForText('Hi, I’m Katori');
-  step('new user lands on onboarding (name step)');
+  await page.waitForText('Eat well, know why.');
+  step('new user lands on the welcome screen');
+  // The welcome screen animates in; wait for it to settle before tapping.
+  await new Promise((r) => setTimeout(r, 1200));
+  await page.click('Let’s begin');
+  await page.waitForText('First, what should I call you?');
+  step('one tap opens the first question');
 
   await page.click('Continue');
   await page.waitForText('What should Katori call you?');
@@ -62,10 +67,12 @@ try {
   await page.screenshot(`${S}/e2e-report-step.png`);
   await page.click('Skip for now');
 
-  await page.waitForText('Asha, here’s your plan');
+  await page.waitForText('Asha, this is your daily katori');
   step('plan shown');
+  // Focus areas animate in one after another.
+  await new Promise((r) => setTimeout(r, 1500));
   const plan = await page.text();
-  for (const expected of ['1,400', '80', 'Your focus', 'Walk 10 minutes after meals']) {
+  for (const expected of ['1,400', '80', 'Focus on these', 'Walk 10 minutes after meals']) {
     if (!plan.includes(expected)) throw new Error(`Plan missing "${expected}"`);
   }
   step('plan shows 1,400 kcal, 80 g protein and focus areas');
@@ -77,7 +84,7 @@ try {
 
   await page.reload();
   await page.waitForText(', Asha');
-  if ((await page.text()).includes('Hi, I’m Katori'))
+  if ((await page.text()).includes('Eat well, know why.'))
     throw new Error('Onboarding shown again after reload');
   step('after a reload (app restart) Today opens directly with the profile');
   await page.screenshot(`${S}/e2e-today.png`);

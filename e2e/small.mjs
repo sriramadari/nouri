@@ -23,7 +23,7 @@ const overflow = () =>
   );
 try {
   await page.goto(BASE + '/');
-  await page.waitForText('Hi, I’m Katori');
+  await page.waitForText('Eat well, know why.');
   await page.screenshot(`${S}/small-onboarding.png`);
   step(`onboarding at 320 px: horizontal overflow ${await overflow()} px`);
   await onboard(page, 'Sam');
@@ -31,7 +31,7 @@ try {
   await sleep(1200);
   await page.screenshot(`${S}/small-today.png`);
   step(`Today at 320 px: horizontal overflow ${await overflow()} px`);
-  await page.click('Add by hand');
+  await page.click('Type it in');
   await page.waitForText('Check your meal');
   await page.type('Food', 'Idli sambar');
   await page.type('Calories', '320');

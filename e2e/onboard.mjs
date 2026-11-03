@@ -1,6 +1,10 @@
 /** Quick onboarding used by later flows. */
 export async function onboard(page, name = 'Ravi') {
-  await page.waitForText('Hi, I’m Katori');
+  await page.waitForText('Eat well, know why.');
+  // The welcome screen animates in; wait for it to settle before tapping.
+  await new Promise((r) => setTimeout(r, 1200));
+  await page.click('Let’s begin');
+  await page.waitForText('First, what should I call you?');
   await page.type('Your first name', name);
   await page.click('Continue');
   await page.waitForText('Nice to meet you');
@@ -19,7 +23,7 @@ export async function onboard(page, name = 'Ravi') {
   await page.click('Continue');
   await page.waitForText('Have a recent blood report?');
   await page.click('Skip for now');
-  await page.waitForText('here’s your plan');
+  await page.waitForText('this is your daily katori');
   await page.click('Start my day');
   await page.waitForText(`, ${name}`);
 }
