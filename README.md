@@ -13,6 +13,15 @@ the maths, explains why it matters for _your_ goal and lab results, and reaches 
   <img src="docs/screenshots/health.png" width="220" alt="Health tab with colour coded lab results" />
 </p>
 
+## Try it
+
+- **Android:** [download the APK](https://github.com/sriramadari/nouri/releases/latest/download/katori.apk)
+  and open it on the phone (allow installing from this source when Android asks). It talks to
+  the hosted API, so it works straight away.
+- **API:** https://nouri-api-sve8.onrender.com/health. It runs on a free tier that sleeps when
+  idle; the first request after a quiet spell takes about 30 seconds, and the app says so while
+  it waits.
+
 ## The problem and the user
 
 **User:** a 22 to 35 year old in India, busy, who wants to lose weight or bring down a number on
@@ -223,7 +232,11 @@ In development the app finds the API automatically on port 3000 of the computer 
 - **API:** `render.yaml` is a Render Blueprint (Singapore, next to the Neon database). Secrets
   are set in the Render dashboard. Migrations run during the build.
 - **Android:** `eas build --profile preview --platform android` builds an installable APK.
-  Release builds are minified and resource shrunk (`expo-build-properties`).
+  Release builds are minified and resource shrunk (`expo-build-properties`). The published APK
+  is built locally for 64 bit ARM only, which covers current Android phones and keeps it small:
+  `EXPO_PUBLIC_API_URL=<api> npx expo prebuild -p android --clean`, then
+  `./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a` in `android/`. It is attached
+  to a GitHub release as `katori.apk`.
 
 ## Known limitations and what comes next
 
