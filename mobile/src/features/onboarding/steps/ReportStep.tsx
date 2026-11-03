@@ -1,55 +1,30 @@
-import { useMutation } from '@tanstack/react-query';
-import * as DocumentPicker from 'expo-document-picker';
 import { StyleSheet, View } from 'react-native';
 
 import { Button, Card, ErrorState, Icon, Text } from '@/components/ui';
+import {
+  toFlaggedMarkers,
+  UploadCancelled,
+  useReportUpload,
+} from '@/features/reports/report-upload';
 import { toApiError } from '@/lib/api/api-error';
-import { api } from '@/lib/api/endpoints';
-import type { ReportResponse } from '@/lib/api/types';
-import { buildUploadForm } from '@/lib/api/upload';
-import type { FlaggedMarker } from '@/lib/health/focus-areas';
 import { spacing } from '@/theme';
 
 import { StepLayout } from '../components/StepLayout';
 import { useFinishOnboarding } from '../finish-onboarding';
 import { useOnboardingDraft } from '../onboarding-draft';
 
-/** Picks a report and uploads it. Resolves to null when the person cancels the picker. */
-async function pickAndUpload(): Promise<ReportResponse | null> {
-  const result = await DocumentPicker.getDocumentAsync({
-    type: ['application/pdf', 'image/*'],
-    copyToCacheDirectory: true,
-  });
-  const asset = result.canceled ? undefined : result.assets[0];
-  if (!asset) return null;
-  return api.uploadReport(
-    await buildUploadForm({
-      uri: asset.uri,
-      name: asset.name,
-      mimeType: asset.mimeType,
-      file: asset.file,
-    }),
-  );
-}
-
-function toFlaggedMarkers(report: ReportResponse): FlaggedMarker[] {
-  return report.biomarkers.flatMap((marker) =>
-    marker.status === 'NORMAL'
-      ? []
-      : [{ key: marker.key, name: marker.name, status: marker.status }],
-  );
-}
-
 export function ReportStep() {
   const update = useOnboardingDraft((state) => state.update);
   const finish = useFinishOnboarding();
-  const upload = useMutation({
-    mutationFn: pickAndUpload,
-    onSuccess: (report) => {
-      if (report) update({ flaggedMarkers: toFlaggedMarkers(report) });
-    },
-  });
+  const upload = useReportUpload();
   const report = upload.data ?? null;
+  const start = () =>
+    upload.mutate('files', {
+      onSuccess: (result) => update({ flaggedMarkers: toFlaggedMarkers(result) }),
+      onError: (error) => {
+        if (error instanceof UploadCancelled) upload.reset();
+      },
+    });
 
   if (upload.isPending) {
     return (
@@ -106,11 +81,11 @@ export function ReportStep() {
       step="report"
       title="Have a recent blood report?"
       subtitle="Optional. Nouri reads it and focuses your plan on what matters for you, like sugar, cholesterol or vitamin D."
-      onContinue={() => upload.mutate()}
+      onContinue={start}
       continueLabel="Upload report"
       secondary={<Button label="Skip for now" variant="ghost" onPress={finish} fullWidth />}
     >
-      {upload.isError ? (
+      {upload.isError && !(upload.error instanceof UploadCancelled) ? (
         <ErrorState
           title="Couldn’t read that report"
           message={toApiError(upload.error).message}

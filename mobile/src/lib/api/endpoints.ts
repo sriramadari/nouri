@@ -1,5 +1,6 @@
 import { apiRequest } from './client';
 import { localDateKey, utcOffsetMinutes } from '../dates';
+import { ApiError } from './api-error';
 import type {
   CreateMealInput,
   DayMeals,
@@ -30,6 +31,16 @@ export const api = {
    */
   uploadReport: (form: FormData) =>
     apiRequest<ReportResponse>({ method: 'POST', path: '/reports', form, timeoutMs: 90_000 }),
+
+  /** The newest completed report, or null when none has been uploaded yet. */
+  getLatestReport: async (): Promise<ReportResponse | null> => {
+    try {
+      return await apiRequest<ReportResponse>({ path: '/reports/latest' });
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 404) return null;
+      throw error;
+    }
+  },
 
   /** Photo or voice note in, editable draft out. Nothing is saved. */
   analyzeMeal: (form: FormData) =>

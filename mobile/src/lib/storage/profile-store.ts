@@ -20,6 +20,8 @@ interface ProfileState {
   needsSync: boolean;
   completeOnboarding: (profile: Profile, targets: Targets, flaggedMarkers: FlaggedMarker[]) => void;
   markSynced: (targets: Targets) => void;
+  /** Called when a new lab report is read, so focus areas follow the latest results. */
+  setFlaggedMarkers: (markers: FlaggedMarker[]) => void;
   /** Forgets the profile on this phone, which sends the person back to onboarding. */
   reset: () => void;
 }
@@ -42,6 +44,7 @@ export const useProfileStore = create<ProfileState>()(
         }),
       // The server recalculates targets; its numbers win if the two copies ever differ.
       markSynced: (targets) => set({ targets, needsSync: false }),
+      setFlaggedMarkers: (flaggedMarkers) => set({ flaggedMarkers }),
       reset: () =>
         set({
           profile: null,
