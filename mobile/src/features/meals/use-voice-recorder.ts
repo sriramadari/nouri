@@ -34,14 +34,16 @@ export function useVoiceRecorder() {
     }
   }, [state.isRecording, state.metering]);
 
-  const start = async (): Promise<'recording' | 'denied'> => {
-    const permission = await requestRecordingPermissionsAsync();
-    if (!permission.granted) return 'denied';
+  /** Asks for the microphone (only prompts the first time). True when recording is allowed. */
+  const requestPermission = async (): Promise<boolean> =>
+    (await requestRecordingPermissionsAsync()).granted;
+
+  /** Starts recording. Call requestPermission first. */
+  const start = async (): Promise<void> => {
     await setAudioModeAsync({ allowsRecording: true, playsInSilentMode: true });
     loudest.current = null;
     await recorder.prepareToRecordAsync();
     recorder.record();
-    return 'recording';
   };
 
   const finish = async () => {
@@ -72,6 +74,7 @@ export function useVoiceRecorder() {
   };
 
   return {
+    requestPermission,
     start,
     stop,
     cancel: finish,

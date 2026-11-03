@@ -95,9 +95,15 @@ export function MealLogger({ onSaved }: { onSaved?: () => void }) {
 
   const speak = async () => {
     haptics.tap();
-    setFlow({ step: 'recording' });
     try {
-      if ((await voice.start()) === 'denied') setFlow({ step: 'denied', what: 'microphone' });
+      // Ask before the sheet opens. On Android the permission dialog pauses the app, and a
+      // sheet caught mid-animation by that pause is dismissed, leaving recording invisible.
+      if (!(await voice.requestPermission())) {
+        setFlow({ step: 'denied', what: 'microphone' });
+        return;
+      }
+      setFlow({ step: 'recording' });
+      await voice.start();
     } catch {
       // e.g. the microphone is busy in a call or another app; never leave a silent screen.
       voice.cancel().catch(() => undefined);
